@@ -1,0 +1,2 @@
+APP_NAME = "M12 OS"
+VERSION = "0.1.0"
