@@ -36,6 +36,8 @@ class HomeScreen(Screen):
 
         if "Notes" in instance.text:
             self.manager.current = "notes"
+        elif "Clock" in instance.text:
+            self.manager.current = "clock"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

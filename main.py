@@ -7,6 +7,8 @@ from utils.logger import log
 from screens.home_screen import HomeScreen
 from screens.notes_screen import NotesScreen
 from screens.note_editor_screen import NoteEditorScreen
+from screens.clock_screen import ClockScreen
+from screens.stopwatch_screen import StopwatchScreen
 
 Window.clearcolor = (0.03, 0.04, 0.08, 1)
 
@@ -20,6 +22,8 @@ class M12OS(App):
      sm.add_widget(NotesScreen(name="notes"))
      sm.add_widget(NoteEditorScreen(name="editor"))
      sm.add_widget(NoteTypesScreen(name="note_types"))
+     sm.add_widget(ClockScreen(name="clock"))
+     sm.add_widget(StopwatchScreen(name="stopwatch"))
      return sm
 
 
