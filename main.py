@@ -1,3 +1,12 @@
+
+from kivy.config import Config
+
+Config.set("graphics", "width", "900")
+Config.set("graphics", "height", "650")
+Config.set("graphics", "minimum_width", "900")
+Config.set("graphics", "minimum_height", "650")
+Config.set("graphics", "resizable", "0")
+
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager

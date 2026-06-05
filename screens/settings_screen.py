@@ -88,7 +88,14 @@ class SettingsScreen(Screen):
 
     def change_unit(self, instance, value):
         self.config.set("temperature_unit", value)
+        self.config.set("last_temperature", 22 if value == "C" else 72)
+
         log.info(f"Settings: temperature_unit={value}")
+
+        if self.manager and self.manager.has_screen("home"):
+            home = self.manager.get_screen("home")
+            if hasattr(home, "refresh_weather_card"):
+                home.refresh_weather_card()
 
     def change_channel(self, instance, value):
         self.config.set("update_channel", value)
@@ -104,4 +111,9 @@ class SettingsScreen(Screen):
         self.manager.current = "updater"
 
     def go_back(self, instance):
+        if self.manager and self.manager.has_screen("home"):
+            home = self.manager.get_screen("home")
+            if hasattr(home, "refresh_weather_card"):
+                home.refresh_weather_card()
+
         self.manager.current = "home"

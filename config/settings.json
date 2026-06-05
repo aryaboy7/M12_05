@@ -1,9 +1,10 @@
 {
     "city": "Brooklyn, NY",
-    "temperature_unit": "F",
+    "temperature_unit": "C",
     "theme": "dark",
     "auto_update": true,
     "update_channel": "stable",
     "start_screen": "home",
-    "last_update_check": ""
+    "last_update_check": "2026-06-05T18:22:13",
+    "last_temperature": 22
 }

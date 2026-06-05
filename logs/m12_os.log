@@ -213,3 +213,93 @@
 2026-06-05 09:52:57,166 | INFO | M12 OS 0.3.2 started
 2026-06-05 09:53:00,109 | INFO | Home: open updater
 2026-06-05 09:53:05,627 | ERROR | Updater check failed: HTTP Error 404: Not Found
+2026-06-05 15:49:48,982 | INFO | M12 OS 0.3.2 started
+2026-06-05 15:56:25,046 | INFO | M12 OS 0.3.2 started
+2026-06-05 16:30:38,103 | INFO | M12 OS 0.3.2 started
+2026-06-05 16:37:13,555 | INFO | M12 OS 0.3.2 started
+2026-06-05 16:37:16,392 | INFO | Home: open notes
+2026-06-05 16:37:19,038 | INFO | Notes: Back pressed
+2026-06-05 16:37:20,679 | INFO | Home: open clock
+2026-06-05 16:37:21,100 | INFO | Clock: opened
+2026-06-05 16:37:23,754 | INFO | Clock: Back pressed
+2026-06-05 16:37:27,483 | INFO | Home: open updater
+2026-06-05 16:37:29,511 | INFO | Updater check OK: local=0.3.2, remote=0.3.3
+2026-06-05 16:52:41,282 | INFO | M12 OS 0.3.2 started
+2026-06-05 16:52:43,886 | INFO | Home: open updater
+2026-06-05 16:52:45,813 | INFO | Updater check OK: local=0.3.2, remote=0.3.3
+2026-06-05 16:59:33,253 | INFO | M12 OS 0.3.2 started
+2026-06-05 16:59:35,885 | INFO | Home: open updater
+2026-06-05 16:59:39,123 | INFO | Updater check OK: local=0.3.2, remote=0.3.3
+2026-06-05 16:59:39,243 | INFO | Updater check OK: local=0.3.2, remote=0.3.3
+2026-06-05 16:59:42,283 | INFO | Updater check OK: local=0.3.2, remote=0.3.3
+2026-06-05 17:01:21,352 | INFO | M12 OS 0.3.2 started
+2026-06-05 17:01:23,124 | INFO | Home: open updater
+2026-06-05 17:01:25,428 | INFO | Updater check OK: local=0.3.2, remote=0.3.3
+2026-06-05 17:07:56,483 | INFO | M12 OS 0.3.2 started
+2026-06-05 17:07:58,711 | INFO | Home: open updater
+2026-06-05 17:08:00,730 | INFO | Updater check OK: local=0.3.2, remote=0.3.3
+2026-06-05 17:09:50,689 | INFO | Updater check OK: local=0.3.2, remote=0.3.3
+2026-06-05 17:16:36,192 | INFO | M12 OS 0.3.2 started
+2026-06-05 17:16:38,946 | INFO | Home: open updater
+2026-06-05 17:16:41,339 | INFO | Updater check OK: local=0.3.2, remote=0.3.3
+2026-06-05 17:16:45,133 | INFO | Update downloaded: /Users/aryaboy/Documents/M12_OS/updates/M12_OS0_3_3.zip
+2026-06-05 17:18:43,117 | INFO | Backup created: /Users/aryaboy/Documents/M12_OS/backups/M12_05_backup_0.3.2_20260605_171842.zip
+2026-06-05 17:18:44,406 | INFO | Update installed: /Users/aryaboy/Documents/M12_OS/updates/M12_OS0_3_3.zip files=30
+2026-06-05 17:19:45,187 | INFO | M12 OS 0.3.2 started
+2026-06-05 17:44:55,504 | INFO | M12 OS 0.3.2 started
+2026-06-05 17:44:57,610 | INFO | Home: open updater
+2026-06-05 17:44:59,963 | INFO | Updater check OK: local=0.3.2, remote=0.3.3
+2026-06-05 17:45:06,803 | INFO | Updater check OK: local=0.3.2, remote=0.3.3
+2026-06-05 17:45:10,036 | INFO | Update downloaded: /Users/aryaboy/Documents/M12_OS/updates/M12_OS0_3_3.zip
+2026-06-05 17:45:16,891 | INFO | Backup created: /Users/aryaboy/Documents/M12_OS/backups/M12_05_backup_0.3.2_20260605_174516.zip
+2026-06-05 17:45:17,675 | INFO | Update installed: /Users/aryaboy/Documents/M12_OS/updates/M12_OS0_3_3.zip files=31
+2026-06-05 17:45:22,957 | INFO | Restarting M12 OS
+2026-06-05 17:45:23,356 | INFO | M12 OS 0.3.2 started
+2026-06-05 18:04:29,227 | INFO | M12 OS 0.3.2 started
+2026-06-05 18:04:32,821 | INFO | Home: open updater
+2026-06-05 18:04:34,340 | INFO | Updater check OK: local=0.3.2, remote=0.3.3
+2026-06-05 18:04:44,794 | INFO | Update downloaded: /Users/aryaboy/Documents/M12_OS/updates/M12_OS0_3_3.zip
+2026-06-05 18:04:47,015 | INFO | Backup created: /Users/aryaboy/Documents/M12_OS/backups/M12_05_backup_0.3.2_20260605_180446.zip
+2026-06-05 18:04:48,510 | INFO | Update installed: /Users/aryaboy/Documents/M12_OS/updates/M12_OS0_3_3.zip files=31
+2026-06-05 18:04:52,232 | INFO | Restarting M12 OS
+2026-06-05 18:04:52,652 | INFO | M12 OS 0.3.3 started
+2026-06-05 18:22:05,561 | INFO | M12 OS 0.3.4 started
+2026-06-05 18:22:08,185 | INFO | Home: open updater
+2026-06-05 18:22:13,533 | INFO | Updater check OK: local=0.3.4, remote=0.3.3
+2026-06-05 18:25:10,038 | INFO | M12 OS 0.3.4 started
+2026-06-05 18:30:19,087 | INFO | M12 OS 0.3.4 started
+2026-06-05 18:35:26,338 | INFO | M12 OS 0.3.4 started
+2026-06-05 18:36:39,554 | INFO | M12 OS 0.3.4 started
+2026-06-05 18:56:14,392 | INFO | M12 OS 0.3.4 started
+2026-06-05 18:56:16,932 | INFO | Home: open updater
+2026-06-05 18:56:19,440 | INFO | Updater check OK: local=0.3.4, remote=0.3.3
+2026-06-05 18:56:29,592 | INFO | Settings: temperature_unit=C
+2026-06-05 19:05:09,423 | INFO | M12 OS 0.3.4 started
+2026-06-05 19:05:41,088 | INFO | M12 OS 0.3.4 started
+2026-06-05 19:05:50,922 | INFO | Home: open settings
+2026-06-05 19:05:54,011 | INFO | Settings: temperature_unit=F
+2026-06-05 19:09:58,967 | INFO | M12 OS 0.3.4 started
+2026-06-05 19:11:37,857 | INFO | M12 OS 0.3.4 started
+2026-06-05 19:13:42,970 | INFO | M12 OS 0.3.4 started
+2026-06-05 19:13:54,154 | INFO | Home: open settings
+2026-06-05 19:13:56,843 | INFO | Settings: temperature_unit=C
+2026-06-05 19:19:44,652 | INFO | M12 OS 0.3.4 started
+2026-06-05 19:19:49,874 | INFO | Home: open settings
+2026-06-05 19:19:52,612 | INFO | Settings: temperature_unit=F
+2026-06-05 19:19:56,753 | INFO | Home: open weather
+2026-06-05 19:20:06,350 | INFO | Home: open settings
+2026-06-05 19:20:09,336 | INFO | Settings: temperature_unit=C
+2026-06-05 19:20:14,107 | INFO | Home: open weather
+2026-06-05 19:22:28,476 | INFO | M12 OS 0.3.4 started
+2026-06-05 19:22:31,438 | INFO | Home: open settings
+2026-06-05 19:22:33,762 | INFO | Settings: temperature_unit=F
+2026-06-05 19:22:37,356 | INFO | Home: open weather
+2026-06-05 19:23:12,934 | INFO | Home: open settings
+2026-06-05 19:25:46,307 | INFO | M12 OS 0.3.4 started
+2026-06-05 19:25:49,898 | INFO | Home: open settings
+2026-06-05 19:25:52,273 | INFO | Settings: temperature_unit=C
+2026-06-05 19:25:57,811 | INFO | Home: open settings
+2026-06-05 19:26:00,748 | INFO | Settings: temperature_unit=F
+2026-06-05 19:28:59,280 | INFO | M12 OS 0.3.4 started
+2026-06-05 19:29:04,935 | INFO | Home: open settings
+2026-06-05 19:29:07,426 | INFO | Settings: temperature_unit=C
