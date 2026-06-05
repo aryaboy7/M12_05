@@ -49,6 +49,16 @@ class ClockScreen(Screen):
         )
         root.add_widget(self.date_label)
 
+        timer_btn = Button(
+            text="Timer",
+            font_size=26,
+            size_hint=(1, 0.15),
+            background_normal="",
+            background_color=(0.12, 0.20, 0.35, 1)
+)
+        timer_btn.bind(on_press=self.open_timer)
+        root.add_widget(timer_btn)
+
         stopwatch_btn = Button(
             text="Stopwatch",
             font_size=26,
@@ -87,4 +97,8 @@ class ClockScreen(Screen):
 
     def open_stopwatch(self, instance):
         log.info("Clock: Stopwatch pressed")
-        self.manager.current = "stopwatch"    
+        self.manager.current = "stopwatch"
+
+    def open_timer(self, instance):
+        log.info("Clock: Timer pressed")
+        self.manager.current = "timer"    
