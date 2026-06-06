@@ -1,7 +1,7 @@
 APP_NAME = "M12 OS"
 VERSION = "0.3.4"
 
-UPDATE_INFO_URL = "https://raw.githubusercontent.com/aryaboy7/M12_05/main/update.json"
+UPDATE_INFO_URL = "https://raw.githubusercontent.com/aryaboy7/M12_OS/main/update.json"
 
 
 def version_text():

@@ -384,3 +384,32 @@
 2026-06-06 07:16:07,940 | INFO | M12 OS 0.3.4 started
 2026-06-06 07:16:10,594 | INFO | Home: open updater
 2026-06-06 07:16:12,857 | INFO | Updater check OK: local=0.3.4, remote=0.3.3
+2026-06-06 07:20:07,499 | INFO | M12 OS 0.3.4 started
+2026-06-06 07:20:10,155 | INFO | Home: open updater
+2026-06-06 07:20:12,580 | ERROR | Updater check failed: Expecting ',' delimiter: line 5 column 3 (char 149)
+2026-06-06 07:22:20,359 | INFO | M12 OS 0.3.4 started
+2026-06-06 07:22:22,347 | INFO | Home: open updater
+2026-06-06 07:22:23,721 | ERROR | Updater check failed: Expecting ',' delimiter: line 5 column 3 (char 149)
+2026-06-06 07:24:27,605 | INFO | M12 OS 0.3.4 started
+2026-06-06 07:24:30,129 | INFO | Home: open updater
+2026-06-06 07:24:31,397 | ERROR | Updater check failed: Expecting ',' delimiter: line 5 column 3 (char 149)
+2026-06-06 07:25:39,342 | INFO | M12 OS 0.3.4 started
+2026-06-06 07:25:41,715 | INFO | Home: open updater
+2026-06-06 07:25:43,367 | ERROR | Updater check failed: Expecting ',' delimiter: line 5 column 3 (char 149)
+2026-06-06 07:39:34,946 | INFO | M12 OS 0.3.4 started
+2026-06-06 07:39:37,961 | INFO | Home: open updater
+2026-06-06 07:39:39,925 | ERROR | Updater check failed: Expecting ',' delimiter: line 5 column 3 (char 149)
+2026-06-06 07:49:55,848 | INFO | M12 OS 0.3.4 started
+2026-06-06 07:49:57,471 | INFO | Home: open notes
+2026-06-06 07:50:00,308 | INFO | Notes: Back pressed
+2026-06-06 07:50:01,859 | INFO | Home: open updater
+2026-06-06 07:50:03,224 | ERROR | Updater check failed: Expecting ',' delimiter: line 5 column 3 (char 149)
+2026-06-06 07:54:38,224 | INFO | M12 OS 0.3.4 started
+2026-06-06 07:54:40,732 | INFO | Home: open updater
+2026-06-06 07:54:43,059 | ERROR | Updater check failed: Expecting ',' delimiter: line 5 column 3 (char 149)
+2026-06-06 07:59:35,764 | INFO | M12 OS 0.3.4 started
+2026-06-06 07:59:37,472 | INFO | Home: open updater
+2026-06-06 07:59:38,991 | ERROR | Updater check failed: Expecting ',' delimiter: line 5 column 3 (char 149)
+2026-06-06 08:01:53,897 | INFO | M12 OS 0.3.4 started
+2026-06-06 08:01:56,608 | INFO | Home: open updater
+2026-06-06 08:01:58,570 | ERROR | Updater check failed: Expecting ',' delimiter: line 5 column 3 (char 149)
