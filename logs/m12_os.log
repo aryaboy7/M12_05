@@ -381,3 +381,6 @@
 2026-06-06 07:11:57,967 | INFO | M12 OS 0.3.4 started
 2026-06-06 07:12:00,848 | INFO | Home: open updater
 2026-06-06 07:12:03,280 | INFO | Updater check OK: local=0.3.4, remote=0.3.3
+2026-06-06 07:16:07,940 | INFO | M12 OS 0.3.4 started
+2026-06-06 07:16:10,594 | INFO | Home: open updater
+2026-06-06 07:16:12,857 | INFO | Updater check OK: local=0.3.4, remote=0.3.3
