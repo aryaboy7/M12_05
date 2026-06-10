@@ -1,6 +1,8 @@
 
 from kivy.config import Config
 
+Config.set("kivy", "clipboard", "sdl2")
+
 Config.set("graphics", "width", "900")
 Config.set("graphics", "height", "650")
 Config.set("graphics", "minimum_width", "900")
