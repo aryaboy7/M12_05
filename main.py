@@ -29,6 +29,13 @@ from screens.files_screen import FilesScreen
 from screens.music_screen import MusicScreen
 from screens.ai_screen import AIScreen
 from screens.weather_screen import WeatherScreen
+from kivy.utils import platform
+from config.version import VERSION
+
+print("PLATFORM =", platform)
+print("WINDOW WIDTH =", Window.width)
+print("WINDOW HEIGHT =", Window.height)
+print("DPI =", Window.dpi)
 
 Window.clearcolor = (0.03, 0.04, 0.08, 1)
 
@@ -57,6 +64,15 @@ class M12OS(App):
 
         start_screen = config.get("start_screen", "home")
         sm.current = start_screen if sm.has_screen(start_screen) else "home"
+        Window.set_title(
+            f"W:{Window.width} H:{Window.height} DPI:{Window.dpi}"
+        )
+        print("================================")
+        print("PLATFORM =", platform)
+        print("WIDTH =", Window.width)
+        print("HEIGHT =", Window.height)
+        print("DPI =", Window.dpi)
+        print("================================")
         return sm
 
 

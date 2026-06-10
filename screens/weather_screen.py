@@ -64,10 +64,7 @@ class WeatherIcon(Widget):
         with self.canvas:
             if self.icon_type in ("sun", "sun_cloud"):
                 Color(1.0, 0.78, 0.10, 1)
-                Ellipse(
-                    pos=(cx - s * 0.18, cy - s * 0.18),
-                    size=(s * 0.36, s * 0.36)
-                )
+                Ellipse(pos=(cx - s * 0.18, cy - s * 0.18), size=(s * 0.36, s * 0.36))
 
                 import math
                 for i in range(12):
@@ -80,38 +77,16 @@ class WeatherIcon(Widget):
 
             if self.icon_type in ("cloud", "sun_cloud", "rain", "snow", "storm", "fog"):
                 Color(0.80, 0.84, 0.88, 1)
-
                 cloud_y = cy - s * 0.14 if self.icon_type == "sun_cloud" else cy
-
-                Ellipse(
-                    pos=(cx - s * 0.36, cloud_y - s * 0.10),
-                    size=(s * 0.32, s * 0.25)
-                )
-                Ellipse(
-                    pos=(cx - s * 0.18, cloud_y + s * 0.00),
-                    size=(s * 0.38, s * 0.32)
-                )
-                Ellipse(
-                    pos=(cx + s * 0.05, cloud_y - s * 0.10),
-                    size=(s * 0.36, s * 0.25)
-                )
-                Rectangle(
-                    pos=(cx - s * 0.30, cloud_y - s * 0.10),
-                    size=(s * 0.62, s * 0.17)
-                )
+                Ellipse(pos=(cx - s * 0.36, cloud_y - s * 0.10), size=(s * 0.32, s * 0.25))
+                Ellipse(pos=(cx - s * 0.18, cloud_y + s * 0.00), size=(s * 0.38, s * 0.32))
+                Ellipse(pos=(cx + s * 0.05, cloud_y - s * 0.10), size=(s * 0.36, s * 0.25))
+                Rectangle(pos=(cx - s * 0.30, cloud_y - s * 0.10), size=(s * 0.62, s * 0.17))
 
             if self.icon_type == "rain":
                 Color(0.18, 0.55, 1.0, 1)
                 for dx in (-0.20, 0.0, 0.20):
-                    Line(
-                        points=[
-                            cx + dx * s,
-                            cy - s * 0.20,
-                            cx + dx * s - s * 0.06,
-                            cy - s * 0.38
-                        ],
-                        width=max(2, s * 0.025)
-                    )
+                    Line(points=[cx + dx * s, cy - s * 0.20, cx + dx * s - s * 0.06, cy - s * 0.38], width=max(2, s * 0.025))
 
             if self.icon_type == "snow":
                 Color(0.65, 0.90, 1.0, 1)
@@ -126,52 +101,28 @@ class WeatherIcon(Widget):
 
             if self.icon_type == "storm":
                 Color(1.0, 0.82, 0.10, 1)
-                Line(
-                    points=[
-                        cx - s * 0.02, cy - s * 0.16,
-                        cx - s * 0.13, cy - s * 0.37,
-                        cx + s * 0.03, cy - s * 0.31,
-                        cx - s * 0.05, cy - s * 0.50,
-                    ],
-                    width=max(3, s * 0.035)
-                )
+                Line(points=[cx - s * 0.02, cy - s * 0.16, cx - s * 0.13, cy - s * 0.37, cx + s * 0.03, cy - s * 0.31, cx - s * 0.05, cy - s * 0.50], width=max(3, s * 0.035))
 
             if self.icon_type == "fog":
                 Color(0.72, 0.76, 0.80, 1)
                 for j in range(4):
                     yy = cy - s * 0.20 + j * s * 0.11
-                    Line(
-                        points=[cx - s * 0.38, yy, cx + s * 0.38, yy],
-                        width=max(2, s * 0.025)
-                    )
+                    Line(points=[cx - s * 0.38, yy, cx + s * 0.38, yy], width=max(2, s * 0.025))
 
 
 class WeatherRow(BoxLayout):
-    def __init__(self, icon_type, text, height_value=58, **kwargs):
-        super().__init__(
-            orientation="horizontal",
-            spacing=10,
-            size_hint_y=None,
-            height=height_value,
-            **kwargs
-        )
+    def __init__(self, left_text, icon_type, right_text, height_value=66, **kwargs):
+        super().__init__(orientation="horizontal", spacing=6, size_hint_y=None, height=height_value, **kwargs)
 
-        self.add_widget(
-            WeatherIcon(
-                icon_type=icon_type,
-                size_hint=(0.12, 1)
-            )
-        )
+        left = Label(text=left_text, font_size=font(17), bold=True, halign="center", valign="middle", size_hint=(0.22, 1))
+        left.bind(size=lambda inst, val: setattr(inst, "text_size", val))
+        self.add_widget(left)
 
-        label = Label(
-            text=text,
-            font_size=font(19),
-            halign="left",
-            valign="middle",
-            size_hint=(0.88, 1)
-        )
-        label.bind(size=lambda inst, val: setattr(inst, "text_size", val))
-        self.add_widget(label)
+        self.add_widget(WeatherIcon(icon_type=icon_type, size_hint=(0.16, 1)))
+
+        right = Label(text=right_text, font_size=font(16), halign="left", valign="middle", size_hint=(0.62, 1))
+        right.bind(size=lambda inst, val: setattr(inst, "text_size", val))
+        self.add_widget(right)
 
 
 class WeatherScreen(Screen):
@@ -185,24 +136,15 @@ class WeatherScreen(Screen):
         self.active_tab = "current"
 
         root = BoxLayout(orientation="vertical", padding=15, spacing=10)
-
-        root.add_widget(Label(
-            text="Weather",
-            font_size=font(34),
-            bold=True,
-            size_hint=(1, 0.09)
-        ))
+        root.add_widget(Label(text="Weather", font_size=font(34), bold=True, size_hint=(1, 0.09)))
 
         tabs = BoxLayout(orientation="horizontal", spacing=8, size_hint=(1, 0.09))
-
         self.current_btn = self.make_tab_button("Current")
         self.forecast_btn = self.make_tab_button("Forecast")
         self.hourly_btn = self.make_tab_button("Hourly")
-
         self.current_btn.bind(on_release=lambda instance: self.show_current())
         self.forecast_btn.bind(on_release=lambda instance: self.show_forecast())
         self.hourly_btn.bind(on_release=lambda instance: self.show_hourly())
-
         tabs.add_widget(self.current_btn)
         tabs.add_widget(self.forecast_btn)
         tabs.add_widget(self.hourly_btn)
@@ -212,35 +154,17 @@ class WeatherScreen(Screen):
         root.add_widget(self.content)
 
         bottom = BoxLayout(orientation="horizontal", spacing=8, size_hint=(1, 0.12))
-
-        refresh_btn = Button(
-            text="Refresh",
-            font_size=font(23),
-            background_normal="",
-            background_color=(0.12, 0.20, 0.35, 1)
-        )
+        refresh_btn = Button(text="Refresh", font_size=font(23), background_normal="", background_color=(0.12, 0.20, 0.35, 1))
         refresh_btn.bind(on_release=self.refresh_weather)
         bottom.add_widget(refresh_btn)
-
-        back_btn = Button(
-            text="< Back",
-            font_size=font(23),
-            background_normal="",
-            background_color=(0.10, 0.15, 0.25, 1)
-        )
+        back_btn = Button(text="< Back", font_size=font(23), background_normal="", background_color=(0.10, 0.15, 0.25, 1))
         back_btn.bind(on_release=self.go_back)
         bottom.add_widget(back_btn)
-
         root.add_widget(bottom)
         self.add_widget(root)
 
     def make_tab_button(self, text):
-        return Button(
-            text=text,
-            font_size=font(20),
-            background_normal="",
-            background_color=(0.10, 0.15, 0.25, 1)
-        )
+        return Button(text=text, font_size=font(20), background_normal="", background_color=(0.10, 0.15, 0.25, 1))
 
     def on_enter(self):
         self.config = ConfigManager()
@@ -261,34 +185,19 @@ class WeatherScreen(Screen):
 
     def show_loading(self, text="Loading weather..."):
         self.clear_content()
-        self.content.add_widget(Label(
-            text=text,
-            font_size=font(26),
-            halign="center",
-            valign="middle"
-        ))
+        self.content.add_widget(Label(text=text, font_size=font(26), halign="center", valign="middle"))
 
     def add_scroll_text(self, text, font_size_value=None):
         scroll = ScrollView(do_scroll_x=False, do_scroll_y=True)
-
-        label = Label(
-            text=text,
-            font_size=font_size_value or font(18),
-            halign="center",
-            valign="top",
-            size_hint_y=None,
-            padding=(10, 10)
-        )
+        label = Label(text=text, font_size=font_size_value or font(18), halign="center", valign="top", size_hint_y=None, padding=(10, 10))
         label.bind(width=lambda inst, val: setattr(inst, "text_size", (val - 20, None)))
         label.bind(texture_size=lambda inst, val: setattr(inst, "height", val[1] + 50))
-
         scroll.add_widget(label)
         self.content.add_widget(scroll)
 
     def show_saved_current(self):
         self.set_active_button("current")
         self.clear_content()
-
         city = self.config.get("city", "Brooklyn, NY")
         unit = self.config.get("temperature_unit", "F")
         temp = self.config.get("last_temperature", "--")
@@ -302,58 +211,27 @@ class WeatherScreen(Screen):
         aqi = self.config.get("last_aqi", "--")
         sunrise = self.config.get("last_sunrise", "--")
         sunset = self.config.get("last_sunset", "--")
-
-        self.build_current_view(
-            icon_type=icon_type,
-            city=city,
-            temp=temp,
-            unit=unit,
-            condition=condition,
-            feels_like=feels_like,
-            advice=advice,
-            humidity=humidity,
-            wind=wind,
-            uv=uv,
-            aqi=aqi,
-            sunrise=sunrise,
-            sunset=sunset,
-            updated_text="Refreshing..."
-        )
+        self.build_current_view(icon_type, city, temp, unit, condition, feels_like, advice, humidity, wind, uv, aqi, sunrise, sunset, "Refreshing...")
 
     def refresh_weather(self, instance):
         self.show_loading()
-
         try:
             unit = self.config.get("temperature_unit", "F")
             city = self.config.get("city", "Brooklyn, NY")
-
             geo = self.geocode_city(city)
             if not geo:
                 self.show_loading(f"City not found:\n{city}")
                 return
-
             self.city_name = geo["name"]
-
-            self.weather_data = self.get_weather_data(
-                geo["latitude"],
-                geo["longitude"],
-                unit
-            )
-
-            self.air_data = self.get_air_quality_data(
-                geo["latitude"],
-                geo["longitude"]
-            )
-
+            self.weather_data = self.get_weather_data(geo["latitude"], geo["longitude"], unit)
+            self.air_data = self.get_air_quality_data(geo["latitude"], geo["longitude"])
             self.save_current_weather(unit)
-
             if self.active_tab == "forecast":
                 self.show_forecast()
             elif self.active_tab == "hourly":
                 self.show_hourly()
             else:
                 self.show_current()
-
         except Exception as e:
             print("WEATHER ERROR =", e)
             self.show_loading(f"Weather error:\n{e}")
@@ -361,34 +239,21 @@ class WeatherScreen(Screen):
     def geocode_city(self, city):
         city_only = city.split(",")[0].strip()
         query = urllib.parse.quote(city_only)
-
-        url = (
-            "https://geocoding-api.open-meteo.com/v1/search"
-            f"?name={query}&count=1&language=en&format=json"
-        )
-
+        url = f"https://geocoding-api.open-meteo.com/v1/search?name={query}&count=1&language=en&format=json"
         with urllib.request.urlopen(url, timeout=10) as response:
             data = json.loads(response.read().decode("utf-8"))
-
         results = data.get("results", [])
         if not results:
             return None
-
         item = results[0]
         name = item.get("name", city_only)
         admin1 = item.get("admin1", "")
         if admin1:
             name = f"{name}, {admin1}"
-
-        return {
-            "name": name,
-            "latitude": item["latitude"],
-            "longitude": item["longitude"]
-        }
+        return {"name": name, "latitude": item["latitude"], "longitude": item["longitude"]}
 
     def get_weather_data(self, latitude, longitude, unit):
         temp_unit = "fahrenheit" if unit == "F" else "celsius"
-
         url = (
             "https://api.open-meteo.com/v1/forecast"
             f"?latitude={latitude}"
@@ -401,23 +266,13 @@ class WeatherScreen(Screen):
             "&forecast_days=10"
             "&timezone=auto"
         )
-
         print("WEATHER URL =", url)
-
         with urllib.request.urlopen(url, timeout=15) as response:
             return json.loads(response.read().decode("utf-8"))
 
     def get_air_quality_data(self, latitude, longitude):
-        url = (
-            "https://air-quality-api.open-meteo.com/v1/air-quality"
-            f"?latitude={latitude}"
-            f"&longitude={longitude}"
-            "&current=us_aqi"
-            "&timezone=auto"
-        )
-
+        url = f"https://air-quality-api.open-meteo.com/v1/air-quality?latitude={latitude}&longitude={longitude}&current=us_aqi&timezone=auto"
         print("AIR QUALITY URL =", url)
-
         try:
             with urllib.request.urlopen(url, timeout=15) as response:
                 return json.loads(response.read().decode("utf-8"))
@@ -428,27 +283,21 @@ class WeatherScreen(Screen):
     def save_current_weather(self, unit):
         if not self.weather_data:
             return
-
         current = self.weather_data.get("current", {})
         daily = self.weather_data.get("daily", {})
-
         temp = round(current.get("temperature_2m", 0))
         feels_like = round(current.get("apparent_temperature", temp))
         humidity = current.get("relative_humidity_2m", "--")
         wind = round(current.get("wind_speed_10m", 0))
         code = current.get("weather_code", -1)
-
         icon_type, condition = self.code_to_icon_condition(code)
         advice = self.make_advice(temp, code, unit)
-
         uv = self.first_value(daily.get("uv_index_max", []), "--")
         sunrise = self.format_api_time(self.first_value(daily.get("sunrise", []), "--"))
         sunset = self.format_api_time(self.first_value(daily.get("sunset", []), "--"))
-
         aqi = "--"
         if self.air_data:
             aqi = self.air_data.get("current", {}).get("us_aqi", "--")
-
         self.config.set("city", self.city_name)
         self.config.set("last_temperature", temp)
         self.config.set("last_feels_like", feels_like)
@@ -464,87 +313,34 @@ class WeatherScreen(Screen):
 
     def show_current(self):
         self.set_active_button("current")
-
         if not self.weather_data:
             self.show_saved_current()
             return
-
         unit = self.config.get("temperature_unit", "F")
         current = self.weather_data.get("current", {})
         daily = self.weather_data.get("daily", {})
-
         temp = round(current.get("temperature_2m", 0))
         feels_like = round(current.get("apparent_temperature", temp))
         humidity = current.get("relative_humidity_2m", "--")
         wind = round(current.get("wind_speed_10m", 0))
         code = current.get("weather_code", -1)
-
         icon_type, condition = self.code_to_icon_condition(code)
         advice = self.make_advice(temp, code, unit)
-
         uv = self.first_value(daily.get("uv_index_max", []), "--")
         sunrise = self.format_api_time(self.first_value(daily.get("sunrise", []), "--"))
         sunset = self.format_api_time(self.first_value(daily.get("sunset", []), "--"))
-
         aqi = "--"
         if self.air_data:
             aqi = self.air_data.get("current", {}).get("us_aqi", "--")
-
         updated = datetime.now().strftime("%I:%M %p")
+        self.build_current_view(icon_type, self.city_name, temp, unit, condition, feels_like, advice, humidity, wind, uv, aqi, sunrise, sunset, f"Updated: {updated}")
 
-        self.build_current_view(
-            icon_type=icon_type,
-            city=self.city_name,
-            temp=temp,
-            unit=unit,
-            condition=condition,
-            feels_like=feels_like,
-            advice=advice,
-            humidity=humidity,
-            wind=wind,
-            uv=uv,
-            aqi=aqi,
-            sunrise=sunrise,
-            sunset=sunset,
-            updated_text=f"Updated: {updated}"
-        )
-
-    def build_current_view(
-        self,
-        icon_type,
-        city,
-        temp,
-        unit,
-        condition,
-        feels_like,
-        advice,
-        humidity,
-        wind,
-        uv,
-        aqi,
-        sunrise,
-        sunset,
-        updated_text
-    ):
+    def build_current_view(self, icon_type, city, temp, unit, condition, feels_like, advice, humidity, wind, uv, aqi, sunrise, sunset, updated_text):
         self.clear_content()
-
-        self.content.add_widget(WeatherIcon(
-            icon_type=icon_type,
-            size_hint=(1, 0.24)
-        ))
-
-        self.content.add_widget(Label(
-            text=f"{city}\n{temp}°{unit}  {condition}",
-            font_size=font(32),
-            bold=True,
-            size_hint=(1, 0.22),
-            halign="center",
-            valign="middle"
-        ))
-
+        self.content.add_widget(WeatherIcon(icon_type=icon_type, size_hint=(1, 0.24)))
+        self.content.add_widget(Label(text=f"{city}\n{temp}°{unit}  {condition}", font_size=font(32), bold=True, size_hint=(1, 0.22), halign="center", valign="middle"))
         uv_label = self.uv_text(uv)
         aqi_label = self.aqi_text(aqi)
-
         details = (
             f"Feels Like: {feels_like}°{unit}\n\n"
             f"{advice}\n\n"
@@ -556,16 +352,13 @@ class WeatherScreen(Screen):
             f"Sunset: {sunset}\n\n"
             f"{updated_text}"
         )
-
         self.add_scroll_text(details, font_size_value=font(18))
 
     def show_forecast(self):
         self.set_active_button("forecast")
-
         if not self.weather_data:
             self.show_loading("No forecast yet.\nPress Refresh.")
             return
-
         unit = self.config.get("temperature_unit", "F")
         daily = self.weather_data.get("daily", {})
         dates = daily.get("time", [])
@@ -573,152 +366,68 @@ class WeatherScreen(Screen):
         min_t = daily.get("temperature_2m_min", [])
         codes = daily.get("weather_code", [])
         precip = daily.get("precipitation_probability_max", [])
-
         if len(dates) < 2:
             self.show_loading("No forecast data.")
             return
-
         self.clear_content()
-
         scroll = ScrollView(do_scroll_x=False, do_scroll_y=True)
         list_box = BoxLayout(orientation="vertical", spacing=6, size_hint_y=None)
         list_box.bind(minimum_height=list_box.setter("height"))
-
-        header = Label(
-            text=f"{self.city_name}\n\nTOMORROW FORECAST",
-            font_size=font(24),
-            bold=True,
-            size_hint_y=None,
-            height=85,
-            halign="center",
-            valign="middle"
-        )
+        header = Label(text=f"{self.city_name}\n\nTOMORROW FORECAST", font_size=font(24), bold=True, size_hint_y=None, height=85, halign="center", valign="middle")
         header.bind(size=lambda inst, val: setattr(inst, "text_size", val))
         list_box.add_widget(header)
-
         i = 1
         icon_type, cond = self.code_to_icon_condition(codes[i])
         rain = precip[i] if i < len(precip) else "--"
-
-        list_box.add_widget(Label(
-            text="Tomorrow",
-            font_size=font(26),
-            bold=True,
-            size_hint_y=None,
-            height=45
-        ))
-
-        list_box.add_widget(WeatherRow(
-            icon_type,
-            f"{cond}\nHigh {round(max_t[i])}°{unit}   Low {round(min_t[i])}°{unit}   Rain {rain}%",
-            height_value=95
-        ))
-
-        list_box.add_widget(Label(
-            text="\nNext 10 Days",
-            font_size=font(24),
-            bold=True,
-            size_hint_y=None,
-            height=70,
-            halign="center",
-            valign="middle"
-        ))
-
+        list_box.add_widget(Label(text="Tomorrow", font_size=font(26), bold=True, size_hint_y=None, height=45))
+        list_box.add_widget(WeatherRow("Tomorrow", icon_type, f"{round(max_t[i])}/{round(min_t[i])}°{unit}\n{cond}  Rain {rain}%", height_value=95))
+        list_box.add_widget(Label(text="\nNext 10 Days", font_size=font(24), bold=True, size_hint_y=None, height=70, halign="center", valign="middle"))
         for i in range(1, min(10, len(dates))):
             icon_type, cond = self.code_to_icon_condition(codes[i])
             rain = precip[i] if i < len(precip) else "--"
             day_name = self.short_day(dates[i])
-            text = (
-                f"{day_name}   {round(max_t[i])}/{round(min_t[i])}°{unit}\n"
-                f"{cond}   Rain {rain}%"
-            )
-            list_box.add_widget(WeatherRow(icon_type, text, height_value=66))
-
-        list_box.add_widget(Label(
-            text=f"Updated: {datetime.now().strftime('%I:%M %p')}",
-            font_size=font(18),
-            size_hint_y=None,
-            height=45,
-            halign="center",
-            valign="middle"
-        ))
-
+            right_text = f"{round(max_t[i])}/{round(min_t[i])}°{unit}\n{cond}  Rain {rain}%"
+            list_box.add_widget(WeatherRow(day_name, icon_type, right_text, height_value=66))
+        list_box.add_widget(Label(text=f"Updated: {datetime.now().strftime('%I:%M %p')}", font_size=font(18), size_hint_y=None, height=45, halign="center", valign="middle"))
         scroll.add_widget(list_box)
         self.content.add_widget(scroll)
 
     def show_hourly(self):
         self.set_active_button("hourly")
-
         if not self.weather_data:
             self.show_loading("No hourly forecast yet.\nPress Refresh.")
             return
-
         unit = self.config.get("temperature_unit", "F")
         daily = self.weather_data.get("daily", {})
         hourly = self.weather_data.get("hourly", {})
         dates = daily.get("time", [])
         today = dates[0] if dates else datetime.now().strftime("%Y-%m-%d")
-
         h_times = hourly.get("time", [])
         h_temps = hourly.get("temperature_2m", [])
         h_codes = hourly.get("weather_code", [])
         h_winds = hourly.get("wind_speed_10m", [])
         h_hums = hourly.get("relative_humidity_2m", [])
-
         self.clear_content()
-
         scroll = ScrollView(do_scroll_x=False, do_scroll_y=True)
         list_box = BoxLayout(orientation="vertical", spacing=6, size_hint_y=None)
         list_box.bind(minimum_height=list_box.setter("height"))
-
-        header = Label(
-            text=f"{self.city_name}\n\nHourly Today",
-            font_size=font(24),
-            bold=True,
-            size_hint_y=None,
-            height=85,
-            halign="center",
-            valign="middle"
-        )
+        header = Label(text=f"{self.city_name}\n\nHourly Today", font_size=font(24), bold=True, size_hint_y=None, height=85, halign="center", valign="middle")
         header.bind(size=lambda inst, val: setattr(inst, "text_size", val))
         list_box.add_widget(header)
-
         count = 0
         for i, h_time in enumerate(h_times):
             if not h_time.startswith(today):
                 continue
-
-            hour = h_time.split("T")[-1]
+            hour = h_time.split("T")[-1][:5]
             icon_type, cond = self.code_to_icon_condition(h_codes[i])
-
-            text = (
-                f"{hour}   {round(h_temps[i])}°{unit}\n"
-                f"{cond}   Humidity {h_hums[i]}%   Wind {round(h_winds[i])}mph"
-            )
-
-            list_box.add_widget(WeatherRow(icon_type, text, height_value=66))
-
+            right_text = f"{round(h_temps[i])}°{unit}\n{cond}  H:{h_hums[i]}%  W:{round(h_winds[i])}"
+            list_box.add_widget(WeatherRow(hour, icon_type, right_text, height_value=66))
             count += 1
             if count >= 24:
                 break
-
         if count == 0:
-            list_box.add_widget(Label(
-                text="No hourly data.",
-                font_size=font(22),
-                size_hint_y=None,
-                height=60
-            ))
-
-        list_box.add_widget(Label(
-            text=f"Updated: {datetime.now().strftime('%I:%M %p')}",
-            font_size=font(18),
-            size_hint_y=None,
-            height=45,
-            halign="center",
-            valign="middle"
-        ))
-
+            list_box.add_widget(Label(text="No hourly data.", font_size=font(22), size_hint_y=None, height=60))
+        list_box.add_widget(Label(text=f"Updated: {datetime.now().strftime('%I:%M %p')}", font_size=font(18), size_hint_y=None, height=45, halign="center", valign="middle"))
         scroll.add_widget(list_box)
         self.content.add_widget(scroll)
 
@@ -743,7 +452,6 @@ class WeatherScreen(Screen):
     def format_api_time(self, value):
         if not value or value == "--":
             return "--"
-
         try:
             dt = datetime.fromisoformat(value)
             return dt.strftime("%I:%M %p")
@@ -755,7 +463,6 @@ class WeatherScreen(Screen):
             uv = float(uv)
         except Exception:
             return "Unknown"
-
         if uv < 3:
             return "Low"
         if uv < 6:
@@ -771,7 +478,6 @@ class WeatherScreen(Screen):
             aqi = int(aqi)
         except Exception:
             return "Unknown"
-
         if aqi <= 50:
             return "Good"
         if aqi <= 100:
@@ -786,7 +492,6 @@ class WeatherScreen(Screen):
 
     def make_advice(self, temp, code, unit):
         advice = []
-
         if unit == "C":
             if temp <= 0:
                 advice.append("Very cold today. Wear a heavy coat.")
@@ -809,16 +514,12 @@ class WeatherScreen(Screen):
                 advice.append("Nice weather. Shirt is fine.")
             else:
                 advice.append("Hot today. Shorts and T-shirt recommended.")
-
         if code in RAIN_CODES:
             advice.append("Take an umbrella.")
-
         if code in SNOW_CODES:
             advice.append("Snow expected. Wear boots.")
-
         if code == 95:
             advice.append("Thunderstorm possible. Stay alert.")
-
         return "\n".join(advice)
 
     def go_back(self, instance):
@@ -826,5 +527,4 @@ class WeatherScreen(Screen):
             home = self.manager.get_screen("home")
             if hasattr(home, "refresh_weather_card"):
                 home.refresh_weather_card()
-
         self.manager.current = "home"

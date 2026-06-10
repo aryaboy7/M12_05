@@ -4,24 +4,35 @@ from kivy.core.window import Window
 def font(base):
     w = Window.width
 
-    if w < 500:      # small M12
-        return int(base * 2.2)
-    elif w < 800:    # phone
-        return int(base * 1.8)
-    elif w < 1200:   # tablet
-        return int(base * 1.4)
+    # M12
+    if w < 700:
+        scale = 0.80
 
-    return int(base)
+    # Phone
+    elif w < 900:
+        scale = 1.00
+
+    # Tablet
+    elif w < 1400:
+        scale = 1.10
+
+    # Desktop
+    else:
+        scale = 1.00
+
+    return int(base * scale)
 
 
 def height(base):
     w = Window.width
 
-    if w < 500:
-        return int(base * 1.8)
-    elif w < 800:
-        return int(base * 1.5)
-    elif w < 1200:
-        return int(base * 1.25)
+    if w < 700:
+        scale = 0.85
+    elif w < 900:
+        scale = 1.00
+    elif w < 1400:
+        scale = 1.05
+    else:
+        scale = 1.00
 
-    return int(base)
+    return int(base * scale)

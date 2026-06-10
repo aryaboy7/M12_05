@@ -8,10 +8,12 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
 
-from config.version import version_text
+#from config.version import version_text
+from config.version import VERSION
 from utils.config_manager import ConfigManager
 from utils.logger import log
 from utils.ui_scale import font
+from kivy.utils import platform
 
 
 class HomeScreen(Screen):
@@ -68,10 +70,18 @@ class HomeScreen(Screen):
 
         root.add_widget(grid)
 
+        #self.version_label = Label(
+         #   text=version_text(),
+         #   font_size=font(16),
+         #   size_hint=(1, 0.06)
+        #)
         self.version_label = Label(
-            text=version_text(),
-            font_size=font(16),
-            size_hint=(1, 0.06)
+            text=(
+                f"M12 OS {VERSION}\n"
+                f"{platform}  W:{Window.width} H:{Window.height} DPI:{Window.dpi}"
+            ),
+            font_size=font(14),
+            size_hint=(1, 0.08)
         )
         root.add_widget(self.version_label)
 
