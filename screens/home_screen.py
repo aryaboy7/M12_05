@@ -53,11 +53,11 @@ class HomeScreen(Screen):
         profile = device_profile()
 
         if profile == "phone":
-            padding = 22
-            spacing = 22
+            padding = 20
+            spacing = 18
         elif profile in ("tablet", "m12"):
-            padding = 16
-            spacing = 14
+            padding = 14
+            spacing = 12
         else:
             padding = 15
             spacing = 15
@@ -69,44 +69,44 @@ class HomeScreen(Screen):
         )
 
         if profile == "phone":
-            clock_hint = 0.19
-            weather_hint = 0.15
-            grid_hint = 0.56
-            version_hint = 0.06
-            clock_size = 52
-            date_size = 23
-            weather_size = 23
-            app_size = 21
-            version_size = 13
-        elif profile == "tablet":
-            clock_hint = 0.19
-            weather_hint = 0.15
-            grid_hint = 0.56
-            version_hint = 0.06
+            clock_hint = 0.17
+            weather_hint = 0.14
+            grid_hint = 0.61
+            version_hint = 0.05
             clock_size = 50
             date_size = 22
             weather_size = 22
             app_size = 20
             version_size = 13
-        elif profile == "m12":
+        elif profile == "tablet":
             clock_hint = 0.18
             weather_hint = 0.14
-            grid_hint = 0.58
-            version_hint = 0.06
-            clock_size = 40
-            date_size = 18
-            weather_size = 18
-            app_size = 17
+            grid_hint = 0.60
+            version_hint = 0.05
+            clock_size = 48
+            date_size = 21
+            weather_size = 21
+            app_size = 19
+            version_size = 13
+        elif profile == "m12":
+            clock_hint = 0.17
+            weather_hint = 0.13
+            grid_hint = 0.62
+            version_hint = 0.05
+            clock_size = 38
+            date_size = 17
+            weather_size = 17
+            app_size = 16
             version_size = 11
         else:
             clock_hint = 0.20
-            weather_hint = 0.16
-            grid_hint = 0.56
-            version_hint = 0.06
+            weather_hint = 0.15
+            grid_hint = 0.58
+            version_hint = 0.05
             clock_size = 60
             date_size = 24
-            weather_size = 26
-            app_size = 23
+            weather_size = 25
+            app_size = 22
             version_size = 14
 
         clock_card = BoxLayout(
@@ -158,6 +158,7 @@ class HomeScreen(Screen):
         apps = [
             ("Notes", "notes"),
             ("Drawing", "drawing"),
+            ("Calendar", "calendar"),
             ("Files", "files"),
             ("Music", "music"),
             ("AI", "ai"),
@@ -239,12 +240,12 @@ class HomeScreen(Screen):
             return 2
 
         if profile == "tablet":
-            return 3
+            return 2
 
         if Window.width < 1200:
-            return 3
+            return 5
 
-        return 4
+        return 5
 
     def open_screen(self, screen_name):
         log.info(f"Home: open {screen_name}")

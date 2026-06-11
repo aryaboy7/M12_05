@@ -31,6 +31,7 @@ from screens.files_screen import FilesScreen
 from screens.music_screen import MusicScreen
 from screens.ai_screen import AIScreen
 from screens.weather_screen import WeatherScreen
+from screens.calendar_screen import CalendarScreen
 from kivy.utils import platform
 from config.version import VERSION
 
@@ -63,6 +64,7 @@ class M12OS(App):
         sm.add_widget(MusicScreen(name="music"))
         sm.add_widget(AIScreen(name="ai"))
         sm.add_widget(WeatherScreen(name="weather"))
+        sm.add_widget(CalendarScreen(name="calendar"))
 
         start_screen = config.get("start_screen", "home")
         sm.current = start_screen if sm.has_screen(start_screen) else "home"
