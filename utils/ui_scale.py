@@ -1,31 +1,46 @@
 from kivy.core.window import Window
 
 
+def device_profile():
+    """
+    Known M12 OS logical screen sizes:
+    - Mac test:       900 x 650
+    - M12:            640 x 1046
+    - Android tablet: 800 x 1280
+    - Phone:         1080 x 2123
+    """
+    w = Window.width
+    h = Window.height
+
+    if h >= 1800:
+        return "phone"
+
+    if w < 700 and h >= 900:
+        return "m12"
+
+    if h >= 1100:
+        return "tablet"
+
+    return "desktop"
+
+
+def is_mobile():
+    return device_profile() in ("m12", "tablet", "phone")
+
+
 def is_m12():
-    return Window.width < 700
-
-
-def is_android_tablet_or_phone():
-    return 700 <= Window.width < 900
+    return device_profile() == "m12"
 
 
 def font(base):
-    """
-    M12 OS global font scaling.
+    profile = device_profile()
 
-    Known logical widths:
-    - M12: around 640
-    - Samsung/Android tablet: around 800
-    - Mac test window: around 900
-    """
-    w = Window.width
-
-    if w < 700:
-        scale = 1.35      # M12 readable
-    elif w < 900:
-        scale = 1.20      # Android phone/tablet
-    elif w < 1200:
-        scale = 1.00      # Mac test window
+    if profile == "phone":
+        scale = 1.80
+    elif profile == "tablet":
+        scale = 1.45
+    elif profile == "m12":
+        scale = 1.45
     else:
         scale = 1.00
 
@@ -33,14 +48,14 @@ def font(base):
 
 
 def height(base):
-    w = Window.width
+    profile = device_profile()
 
-    if w < 700:
-        scale = 1.30
-    elif w < 900:
-        scale = 1.15
-    elif w < 1200:
-        scale = 1.00
+    if profile == "phone":
+        scale = 1.55
+    elif profile == "tablet":
+        scale = 1.35
+    elif profile == "m12":
+        scale = 1.35
     else:
         scale = 1.00
 
