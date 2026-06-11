@@ -61,7 +61,7 @@ def row_height():
     if profile == "tablet":
         return 118
     if profile == "m12":
-        return 92
+        return 130
 
     return 80
 
@@ -282,13 +282,13 @@ class NotesScreen(Screen):
 
                 # On mobile, keep it readable: title + type only.
                 text = f"{title}\n{note_type}"
-                fs = notes_font(18)
+                fs = notes_font(24)
             else:
                 if len(preview) > 60:
                     preview = preview[:60] + "..."
 
                 text = f"{title}\n{note_type} | {preview}"
-                fs = notes_font(18)
+                fs = notes_font(20)
 
             btn = Button(
                 text=text,

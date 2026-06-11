@@ -81,10 +81,10 @@ class NoteEditorScreen(Screen):
             title_hint = 0.10
             type_hint = 0.09
             body_hint = 0.71
-            button_size = 21
-            title_size = 21
-            type_size = 19
-            body_size = 19
+            button_size = 24
+            title_size = 26
+            type_size = 24
+            body_size = 28
         else:
             top_hint = 0.12
             title_hint = 0.12
