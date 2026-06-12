@@ -1,0 +1,124 @@
+2026-06-11 18:28:58,732 | INFO | M12 OS 0.4.0 started
+2026-06-11 18:29:01,339 | INFO | Home: open calendar
+2026-06-11 18:31:36,801 | INFO | Calendar: added Victoria take from school
+2026-06-11 18:31:36,805 | INFO | Calendar: events saved
+2026-06-11 18:41:52,706 | INFO | Calendar: added Watch some good movie
+2026-06-11 18:41:52,708 | INFO | Calendar: events saved
+2026-06-11 18:45:12,315 | INFO | M12 OS 0.4.0 started
+2026-06-11 18:45:15,209 | INFO | Home: open calendar
+2026-06-11 18:55:26,448 | INFO | M12 OS 0.4.0 started
+2026-06-11 18:55:28,808 | INFO | Home: open calendar
+2026-06-11 18:55:42,759 | INFO | Calendar: selected event 0
+2026-06-11 18:56:05,895 | INFO | Calendar: edited Watch some good movie
+2026-06-11 18:56:05,898 | INFO | Calendar: events saved
+2026-06-11 18:57:05,544 | INFO | Calendar: selected event 0
+2026-06-11 18:57:31,517 | INFO | Calendar: edited Watch some good movie
+2026-06-11 18:57:31,518 | INFO | Calendar: events saved
+2026-06-11 18:59:11,086 | INFO | M12 OS 0.4.0 started
+2026-06-11 18:59:13,288 | INFO | Home: open calendar
+2026-06-11 18:59:20,195 | INFO | Calendar: selected event 1
+2026-06-11 18:59:39,894 | INFO | Calendar: edited Victoria take from school
+2026-06-11 18:59:39,896 | INFO | Calendar: events saved
+2026-06-11 18:59:52,543 | INFO | Calendar: selected event 2
+2026-06-11 19:00:03,041 | INFO | Calendar: edited Visit Doctor Bilik
+2026-06-11 19:00:03,043 | INFO | Calendar: events saved
+2026-06-11 19:00:19,544 | INFO | Calendar: selected event 3
+2026-06-11 19:00:26,561 | INFO | Calendar: edited Boarding Pass Check in
+2026-06-11 19:00:26,563 | INFO | Calendar: events saved
+2026-06-11 19:00:30,991 | INFO | Calendar: selected event 4
+2026-06-11 19:00:43,375 | INFO | Calendar: edited Flight to Italy
+2026-06-11 19:00:43,378 | INFO | Calendar: events saved
+2026-06-11 19:01:31,617 | INFO | Calendar: selected event 0
+2026-06-11 19:01:51,150 | INFO | Calendar: edited Watch some good movie
+2026-06-11 19:01:51,153 | INFO | Calendar: events saved
+2026-06-11 19:06:24,156 | INFO | Calendar: added Theater and Parking Lot
+2026-06-11 19:06:24,158 | INFO | Calendar: events saved
+2026-06-11 19:15:13,821 | INFO | Calendar: events saved
+2026-06-11 19:19:39,993 | INFO | M12 OS 0.4.0 started
+2026-06-11 19:19:43,070 | INFO | Home: open calendar
+2026-06-11 19:19:46,621 | INFO | Calendar: selected event 0
+2026-06-11 19:19:57,696 | INFO | Calendar: edited Watch some good movie
+2026-06-11 19:19:57,699 | INFO | Calendar: events saved
+2026-06-11 19:25:13,584 | INFO | Calendar: events saved
+2026-06-11 19:46:51,094 | INFO | M12 OS 0.4.0 started
+2026-06-11 19:46:51,122 | WARNING | EventNotifier: sound not loaded: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 19:46:51,122 | INFO | EventNotifier: started
+2026-06-11 19:46:54,803 | INFO | Home: open calendar
+2026-06-11 19:46:55,254 | INFO | Calendar: events saved
+2026-06-11 19:46:58,140 | INFO | Calendar: selected event 0
+2026-06-11 19:47:29,693 | INFO | Calendar: edited Watch some good movie
+2026-06-11 19:47:29,695 | INFO | Calendar: events saved
+2026-06-11 19:48:59,777 | INFO | Home: open settings
+2026-06-11 19:50:20,821 | WARNING | EventNotifier: no playable sound file at /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 19:50:20,825 | INFO | EventNotifier: Reminder popup shown for Watch some good movie
+2026-06-11 19:55:20,836 | WARNING | EventNotifier: no playable sound file at /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 19:55:20,840 | INFO | EventNotifier: Event Time popup shown for Watch some good movie
+2026-06-11 19:57:40,963 | INFO | EventNotifier: stopped
+2026-06-11 19:59:31,379 | INFO | M12 OS 0.4.0 started
+2026-06-11 19:59:31,406 | WARNING | EventNotifier: sound not loaded: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 19:59:31,406 | INFO | EventNotifier: started
+2026-06-11 19:59:34,095 | INFO | Home: open calendar
+2026-06-11 19:59:37,134 | INFO | Calendar: selected event 0
+2026-06-11 20:00:13,181 | INFO | Calendar: edited Watch some good movie
+2026-06-11 20:00:13,183 | INFO | Calendar: events saved
+2026-06-11 20:00:31,076 | INFO | EventNotifier: sound played with afplay /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 20:00:31,079 | INFO | EventNotifier: Reminder popup shown for Watch some good movie
+2026-06-11 20:00:34,544 | INFO | Calendar: events saved
+2026-06-11 20:02:44,370 | INFO | Calendar: selected event 0
+2026-06-11 20:02:59,350 | INFO | Calendar: edited Watch some good movie
+2026-06-11 20:02:59,353 | INFO | Calendar: events saved
+2026-06-11 20:03:38,115 | INFO | EventNotifier: stopped
+2026-06-11 20:03:51,375 | INFO | M12 OS 0.4.0 started
+2026-06-11 20:03:51,403 | WARNING | EventNotifier: sound not loaded: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 20:03:51,403 | INFO | EventNotifier: started
+2026-06-11 20:03:53,164 | INFO | Home: open calendar
+2026-06-11 20:03:56,985 | INFO | Calendar: selected event 0
+2026-06-11 20:04:35,632 | INFO | Calendar: edited Watch some good movie
+2026-06-11 20:04:35,634 | INFO | Calendar: events saved
+2026-06-11 20:04:50,544 | INFO | Calendar: selected event 0
+2026-06-11 20:05:00,409 | INFO | Calendar: edited Watch some good movie
+2026-06-11 20:05:00,411 | INFO | Calendar: events saved
+2026-06-11 20:05:21,087 | INFO | EventNotifier: sound played with afplay /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 20:05:21,090 | INFO | EventNotifier: Reminder popup shown for Watch some good movie
+2026-06-11 20:09:11,377 | INFO | EventNotifier: stopped
+2026-06-11 20:09:42,475 | INFO | M12 OS 0.4.0 started
+2026-06-11 20:09:42,502 | WARNING | EventNotifier: sound not loaded: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 20:09:42,502 | INFO | EventNotifier: started
+2026-06-11 20:09:44,237 | INFO | Home: open calendar
+2026-06-11 20:09:45,840 | INFO | Calendar: selected event 0
+2026-06-11 20:09:58,972 | INFO | Calendar: edited Watch some good movie
+2026-06-11 20:09:58,974 | INFO | Calendar: events saved
+2026-06-11 20:10:12,194 | INFO | EventNotifier: sound played with afplay /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 20:10:12,197 | INFO | EventNotifier: Reminder popup shown for Watch some good movie
+2026-06-11 20:11:34,792 | INFO | Calendar: selected event 0
+2026-06-11 20:11:43,715 | INFO | EventNotifier: stopped
+2026-06-11 20:15:20,079 | INFO | M12 OS 0.4.0 started
+2026-06-11 20:15:20,107 | WARNING | EventNotifier: sound not loaded: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 20:15:20,107 | INFO | EventNotifier: started
+2026-06-11 20:15:21,761 | INFO | EventNotifier: sound played with afplay /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 20:15:21,763 | INFO | EventNotifier: Event Time popup shown for Watch some good movie
+2026-06-11 20:19:21,361 | INFO | EventNotifier: stopped
+2026-06-11 20:20:58,219 | INFO | M12 OS 0.4.0 started
+2026-06-11 20:20:58,249 | WARNING | EventNotifier FINAL: sound not loaded: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 20:20:58,249 | INFO | EventNotifier FINAL: started
+2026-06-11 20:21:00,105 | INFO | Home: open calendar
+2026-06-11 20:21:01,658 | INFO | Calendar: selected event 0
+2026-06-11 20:21:38,126 | INFO | Calendar: edited Watch some good movie
+2026-06-11 20:21:38,129 | INFO | Calendar: events saved
+2026-06-11 20:22:51,242 | INFO | Home: open drawing
+2026-06-11 20:25:27,913 | INFO | EventNotifier FINAL: sound played with afplay /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 20:25:27,917 | INFO | EventNotifier FINAL: REMINDER popup shown for Watch some good movie
+2026-06-11 20:30:27,920 | INFO | EventNotifier FINAL: sound played with afplay /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 20:30:27,923 | INFO | EventNotifier FINAL: EVENT TIME popup shown for Watch some good movie
+2026-06-11 20:36:58,402 | INFO | Home: open calendar
+2026-06-11 20:37:00,196 | INFO | Calendar: selected event 0
+2026-06-11 20:37:55,331 | INFO | Calendar: edited Watch some good movie
+2026-06-11 20:37:55,333 | INFO | Calendar: events saved
+2026-06-11 20:38:18,484 | INFO | Home: open weather
+2026-06-11 20:43:27,630 | INFO | EventNotifier FINAL: stopped
+2026-06-11 20:43:32,376 | INFO | M12 OS 0.4.0 started
+2026-06-11 20:43:32,403 | WARNING | EventNotifier FINAL: sound not loaded: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 20:43:32,404 | INFO | EventNotifier FINAL: started
+2026-06-11 20:45:02,076 | INFO | EventNotifier FINAL: sound played with afplay /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-11 20:45:02,081 | INFO | EventNotifier FINAL: REMINDER popup shown for Watch some good movie
+2026-06-11 20:55:47,945 | INFO | EventNotifier FINAL: stopped

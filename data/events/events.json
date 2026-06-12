@@ -1,20 +1,56 @@
 [
     {
+        "title": "Watch some good movie",
+        "date": "2026-06-11",
+        "time": "21:00",
+        "notes": "Find a good movie and watch it.",
+        "reminder": "15m",
+        "reminder_notified": true,
+        "event_notified": false
+    },
+    {
+        "title": "Victoria take from school",
+        "date": "2026-06-12",
+        "time": "14:15",
+        "notes": "Pick up Vicky from school",
+        "reminder": "1h",
+        "reminder_notified": false,
+        "event_notified": false
+    },
+    {
+        "title": "Theater and Parking Lot",
+        "date": "2026-06-12",
+        "time": "19:00",
+        "notes": "We need to leave before 4 PM",
+        "reminder": "1h",
+        "reminder_notified": false,
+        "event_notified": false
+    },
+    {
         "title": "Visit Doctor Bilik",
         "date": "2026-06-18",
         "time": "09:00",
-        "notes": "Blood Test"
+        "notes": "Blood Test",
+        "reminder": "1h",
+        "reminder_notified": false,
+        "event_notified": false
     },
     {
         "title": "Boarding Pass Check in",
         "date": "2026-06-23",
         "time": "19:00",
-        "notes": "Register flight to Italy"
+        "notes": "Register flight to Italy",
+        "reminder": "15m",
+        "reminder_notified": false,
+        "event_notified": false
     },
     {
         "title": "Flight to Italy",
         "date": "2026-06-24",
         "time": "15:00",
-        "notes": "Flight to Italy"
+        "notes": "Flight to Italy",
+        "reminder": "1 day",
+        "reminder_notified": false,
+        "event_notified": false
     }
 ]

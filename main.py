@@ -1,4 +1,3 @@
-
 from kivy.config import Config
 
 Config.set("kivy", "clipboard", "sdl2")
@@ -12,10 +11,12 @@ Config.set("graphics", "resizable", "0")
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager
+from kivy.utils import platform
 
 from config.version import APP_NAME, VERSION
 from utils.config_manager import ConfigManager
 from utils.logger import log
+from utils.event_notifier import EventNotifier
 
 from screens.home_screen import HomeScreen
 from screens.notes_screen import NotesScreen
@@ -32,8 +33,7 @@ from screens.music_screen import MusicScreen
 from screens.ai_screen import AIScreen
 from screens.weather_screen import WeatherScreen
 from screens.calendar_screen import CalendarScreen
-from kivy.utils import platform
-from config.version import VERSION
+
 
 print("PLATFORM =", platform)
 print("WINDOW WIDTH =", Window.width)
@@ -68,16 +68,24 @@ class M12OS(App):
 
         start_screen = config.get("start_screen", "home")
         sm.current = start_screen if sm.has_screen(start_screen) else "home"
-        Window.set_title(
-            f"W:{Window.width} H:{Window.height} DPI:{Window.dpi}"
-        )
+
+        Window.set_title(f"W:{Window.width} H:{Window.height} DPI:{Window.dpi}")
+
         print("================================")
         print("PLATFORM =", platform)
         print("WIDTH =", Window.width)
         print("HEIGHT =", Window.height)
         print("DPI =", Window.dpi)
         print("================================")
+
+        self.event_notifier = EventNotifier(interval_seconds=30)
+        self.event_notifier.start()
+
         return sm
+
+    def on_stop(self):
+        if hasattr(self, "event_notifier"):
+            self.event_notifier.stop()
 
 
 if __name__ == "__main__":
