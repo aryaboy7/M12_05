@@ -16,6 +16,7 @@ from kivy.uix.spinner import Spinner
 
 from utils.ui_scale import font, height
 from utils.logger import log
+from utils.text_editor_popup import open_text_editor
 
 
 Window.softinput_mode = "resize"
@@ -446,8 +447,13 @@ class CalendarScreen(Screen):
             multiline=False,
             size_hint=(1, 0.09),
             use_bubble=False,
-            use_handles=False
+            use_handles=False,
+            readonly=(device_profile() == "m12")
         )
+
+        if device_profile() == "m12":
+            self.title_input.bind(on_touch_down=self.title_touched)
+
         self.root_box.add_widget(self.title_input)
 
         self.date_input = TextInput(
@@ -487,8 +493,13 @@ class CalendarScreen(Screen):
             multiline=True,
             size_hint=(1, 0.25),
             use_bubble=False,
-            use_handles=False
+            use_handles=False,
+            readonly=(device_profile() == "m12")
         )
+
+        if device_profile() == "m12":
+            self.notes_input.bind(on_touch_down=self.notes_touched)
+
         self.root_box.add_widget(self.notes_input)
 
         reminder_text = event.get("reminder", "None")
@@ -520,6 +531,40 @@ class CalendarScreen(Screen):
         buttons.add_widget(self.make_btn("Save", lambda inst: self.save_event(index), (0.12, 0.20, 0.35, 1)))
         buttons.add_widget(self.make_btn("Cancel", self.build_list_view))
         self.root_box.add_widget(buttons)
+
+    def title_touched(self, instance, touch):
+        if instance.collide_point(*touch.pos):
+            self.open_title_editor()
+            return True
+        return False
+
+    def notes_touched(self, instance, touch):
+        if instance.collide_point(*touch.pos):
+            self.open_notes_editor()
+            return True
+        return False
+
+    def open_title_editor(self):
+        def save_text(value):
+            self.title_input.text = value
+
+        open_text_editor(
+            title="Event Title",
+            text=self.title_input.text,
+            on_save=save_text,
+            multiline=False
+        )
+
+    def open_notes_editor(self):
+        def save_text(value):
+            self.notes_input.text = value
+
+        open_text_editor(
+            title="Event Notes",
+            text=self.notes_input.text,
+            on_save=save_text,
+            multiline=True
+        )
 
     def hide_keyboard(self, *args):
         for name in ("title_input", "notes_input", "date_input", "time_input"):

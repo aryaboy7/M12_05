@@ -11,6 +11,7 @@ from kivy.uix.scrollview import ScrollView
 
 from utils.ui_scale import font, height
 from utils.logger import log
+from utils.text_editor_popup import open_text_editor
 
 
 Window.softinput_mode = "resize"
@@ -139,8 +140,13 @@ class NoteEditorScreen(Screen):
             height=height(62),
             multiline=False,
             use_bubble=False,
-            use_handles=False
+            use_handles=False,
+            readonly=(device_profile() == "m12")
         )
+
+        if device_profile() == "m12":
+            self.title_input.bind(on_touch_down=self.title_touched)
+
         form.add_widget(self.title_input)
 
         self.type_spinner = Spinner(
@@ -161,9 +167,15 @@ class NoteEditorScreen(Screen):
             height=height(body_height),
             multiline=True,
             use_bubble=False,
-            use_handles=False
+            use_handles=False,
+            readonly=(device_profile() == "m12")
         )
-        self.body_input.bind(focus=self.on_body_focus)
+
+        if device_profile() == "m12":
+            self.body_input.bind(on_touch_down=self.body_touched)
+        else:
+            self.body_input.bind(focus=self.on_body_focus)
+
         form.add_widget(self.body_input)
 
         form.add_widget(BoxLayout(size_hint=(1, None), height=height(120)))
@@ -176,6 +188,40 @@ class NoteEditorScreen(Screen):
     def on_body_focus(self, instance, focused):
         if focused:
             self.scroll.scroll_y = 0.0
+
+    def title_touched(self, instance, touch):
+        if instance.collide_point(*touch.pos):
+            self.open_title_editor()
+            return True
+        return False
+
+    def body_touched(self, instance, touch):
+        if instance.collide_point(*touch.pos):
+            self.open_body_editor()
+            return True
+        return False
+
+    def open_title_editor(self):
+        def save_text(value):
+            self.title_input.text = value
+
+        open_text_editor(
+            title="Note Title",
+            text=self.title_input.text,
+            on_save=save_text,
+            multiline=False
+        )
+
+    def open_body_editor(self):
+        def save_text(value):
+            self.body_input.text = value
+
+        open_text_editor(
+            title="Note Text",
+            text=self.body_input.text,
+            on_save=save_text,
+            multiline=True
+        )
 
     def load_types(self):
         try:

@@ -33,7 +33,7 @@
         "notes": "We need to leave before 4 PM",
         "reminder": "1h",
         "reminder_notified": false,
-        "event_notified": false
+        "event_notified": true
     },
     {
         "title": "Visit Doctor Bilik",

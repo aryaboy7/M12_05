@@ -240,3 +240,13 @@
 2026-06-12 15:46:03,623 | INFO | Notes: New pressed
 2026-06-12 15:46:03,623 | INFO | Editor: new note
 2026-06-12 15:46:28,087 | INFO | EventNotifier FINAL: stopped
+2026-06-12 16:13:38,264 | INFO | M12 OS 0.4.5 started
+2026-06-12 16:13:38,294 | WARNING | EventNotifier FINAL: sound not loaded: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-12 16:13:38,294 | INFO | EventNotifier FINAL: started
+2026-06-12 16:13:42,280 | INFO | Home: open calendar
+2026-06-12 16:13:52,550 | INFO | EventNotifier FINAL: stopped
+2026-06-13 08:56:01,692 | INFO | M12 OS 0.4.5 started
+2026-06-13 08:56:01,725 | WARNING | EventNotifier FINAL: sound not loaded: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-13 08:56:01,725 | INFO | EventNotifier FINAL: started
+2026-06-13 08:56:06,248 | INFO | Home: open notes
+2026-06-13 08:56:12,645 | INFO | EventNotifier FINAL: stopped
