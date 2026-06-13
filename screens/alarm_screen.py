@@ -332,6 +332,10 @@ class AlarmScreen(Screen):
                 self.status_label.text = "Select days or choose Once"
                 return
 
+            # Saving means alarm becomes active.
+            self.enabled = True
+            self.update_enable_button()
+
             data = [
                 {
                     "hour": self.alarm_hour,
@@ -346,11 +350,18 @@ class AlarmScreen(Screen):
             ]
 
             ALARMS_FILE.write_text(json.dumps(data, indent=4), encoding="utf-8")
-            self.status_label.text = "Alarm saved"
+
+            self.status_label.text = "Alarm Saved"
             log.info("Alarm saved")
+
+            Clock.schedule_once(self.return_to_clock, 0.8)
 
         except Exception as e:
             self.status_label.text = str(e)
+
+    def return_to_clock(self, dt):
+        if self.manager:
+            self.manager.current = "clock"
 
     def load_alarm(self):
         try:
@@ -397,7 +408,7 @@ class AlarmScreen(Screen):
             self.update_repeat_buttons()
             self.update_until_label()
 
-            self.status_label.text = "Alarm deleted"
+            self.status_label.text = "Alarm Deleted"
 
         except Exception as e:
             self.status_label.text = str(e)

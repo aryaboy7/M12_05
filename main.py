@@ -36,6 +36,7 @@ from screens.calendar_screen import CalendarScreen
 from screens.calculator_converter_screen import CalculatorConverterScreen
 from screens.alarm_screen import AlarmScreen
 from utils.alarm_notifier import AlarmNotifier
+from screens.backup_screen import BackupScreen
 
 print("PLATFORM =", platform)
 print("WINDOW WIDTH =", Window.width)
@@ -69,6 +70,7 @@ class M12OS(App):
         sm.add_widget(CalendarScreen(name="calendar"))
         sm.add_widget(CalculatorConverterScreen(name="calculator"))
         sm.add_widget(AlarmScreen(name="alarm"))
+        sm.add_widget(BackupScreen(name="backup"))
 
         start_screen = config.get("start_screen", "home")
         sm.current = start_screen if sm.has_screen(start_screen) else "home"

@@ -9,6 +9,7 @@ from kivy.uix.label import Label
 from kivy.uix.spinner import Spinner
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
+from kivy.graphics import Color, Rectangle
 
 from config.version import version_text
 from utils.config_manager import ConfigManager
@@ -19,6 +20,14 @@ from utils.ui_scale import font, height
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_FILE = BASE_DIR / "logs" / "m12_os.log"
 COPY_FILE = BASE_DIR / "logs" / "copied_log_text.txt"
+
+BG = (0.04, 0.07, 0.12, 1)
+CARD = (0.08, 0.14, 0.24, 1)
+BLUE = (0.13, 0.28, 0.48, 1)
+GREEN = (0.10, 0.45, 0.20, 1)
+ORANGE = (0.45, 0.30, 0.10, 1)
+RED = (0.50, 0.15, 0.15, 1)
+DARK = (0.10, 0.15, 0.25, 1)
 
 
 class SettingsScreen(Screen):
@@ -35,90 +44,144 @@ class SettingsScreen(Screen):
     def clear_screen(self):
         self.clear_widgets()
 
-    def make_label(self, text):
+    def add_bg(self, widget):
+        with widget.canvas.before:
+            Color(*BG)
+            rect = Rectangle(pos=widget.pos, size=widget.size)
+
+        widget.bind(
+            pos=lambda inst, val: setattr(rect, "pos", inst.pos),
+            size=lambda inst, val: setattr(rect, "size", inst.size)
+        )
+
+    def make_title(self, text):
+        return Label(
+            text=text,
+            font_size=font(40),
+            bold=True,
+            color=(1, 1, 1, 1),
+            size_hint=(1, 0.10)
+        )
+
+    def make_subtitle(self, text):
         return Label(
             text=text,
             font_size=font(22),
+            color=(0.70, 0.85, 1, 1),
             size_hint=(1, 0.06)
         )
 
-    def make_button(self, text, color=(0.12, 0.20, 0.35, 1)):
+    def make_section_label(self, text):
+        return Label(
+            text=text,
+            font_size=font(24),
+            bold=True,
+            color=(0.80, 0.95, 1, 1),
+            size_hint=(1, 0.07)
+        )
+
+    def make_button(self, text, color=BLUE):
         return Button(
             text=text,
-            font_size=font(28),
-            size_hint=(1, 0.11),
+            font_size=font(27),
+            size_hint=(1, 0.105),
             background_normal="",
-            background_color=color
+            background_color=color,
+            color=(1, 1, 1, 1),
+            bold=True
+        )
+
+    def make_small_button(self, text, color=BLUE):
+        return Button(
+            text=text,
+            font_size=font(23),
+            background_normal="",
+            background_color=color,
+            color=(1, 1, 1, 1),
+            bold=True
+        )
+
+    def make_spinner(self, text, values):
+        return Spinner(
+            text=text,
+            values=values,
+            font_size=font(28),
+            size_hint=(1, 0.105),
+            background_normal="",
+            background_color=BLUE,
+            color=(1, 1, 1, 1)
         )
 
     def build_settings_view(self, instance=None):
         self.clear_screen()
         self.config = ConfigManager()
 
-        root = BoxLayout(orientation="vertical", padding=15, spacing=10)
+        root = BoxLayout(orientation="vertical", padding=15, spacing=9)
+        self.add_bg(root)
 
-        root.add_widget(Label(
-            text="Settings",
-            font_size=font(40),
-            bold=True,
-            size_hint=(1, 0.12)
-        ))
+        root.add_widget(self.make_title("Settings"))
+        root.add_widget(self.make_subtitle(version_text()))
 
-        root.add_widget(Label(
-            text=version_text(),
-            font_size=font(26),
-            size_hint=(1, 0.07)
-        ))
+        root.add_widget(self.make_section_label("Weather"))
 
-        root.add_widget(self.make_label("Temperature Unit"))
-
-        self.unit_spinner = Spinner(
-            text=self.config.get("temperature_unit", "F"),
-            values=("F", "C"),
-            font_size=font(28),
-            size_hint=(1, 0.11),
-            background_normal="",
-            background_color=(0.12, 0.20, 0.35, 1)
+        self.unit_spinner = self.make_spinner(
+            self.config.get("temperature_unit", "F"),
+            ("F", "C")
         )
         self.unit_spinner.bind(text=self.change_unit)
         root.add_widget(self.unit_spinner)
 
+        root.add_widget(self.make_section_label("System"))
+
         self.auto_btn = self.make_button(
             self.auto_update_text(),
-            (0.10, 0.15, 0.25, 1)
+            GREEN if self.config.get("auto_update", True) else RED
         )
         self.auto_btn.bind(on_press=self.toggle_auto_update)
         root.add_widget(self.auto_btn)
 
-        updater_btn = self.make_button("Open Updater")
+        updater_btn = self.make_button("Open Updater", BLUE)
         updater_btn.bind(on_press=self.open_updater)
         root.add_widget(updater_btn)
 
-        log_btn = self.make_button("View Log")
+        backup_btn = self.make_button("Backup", GREEN)
+        backup_btn.bind(on_press=self.open_backup)
+        root.add_widget(backup_btn)
+
+        log_btn = self.make_button("View Log", ORANGE)
         log_btn.bind(on_press=self.build_log_view)
         root.add_widget(log_btn)
 
-        back_btn = self.make_button("< Back", (0.10, 0.15, 0.25, 1))
+        back_btn = self.make_button("< Back", DARK)
         back_btn.bind(on_press=self.go_back)
         root.add_widget(back_btn)
 
         self.add_widget(root)
 
+    def open_backup(self, instance):
+        if self.manager and self.manager.has_screen("backup"):
+            self.manager.current = "backup"
+        else:
+            log.error("Settings: backup screen missing")
+
     def build_log_view(self, instance=None):
         self.clear_screen()
 
         root = BoxLayout(orientation="vertical", padding=10, spacing=6)
+        self.add_bg(root)
 
         root.add_widget(Label(
             text="M12 OS Log",
-            font_size=font(40),
+            font_size=font(38),
             bold=True,
+            color=(1, 1, 1, 1),
             size_hint=(1, 0.08)
         ))
 
         self.log_status = Label(
             text="Tap a line, then Copy Line.",
             font_size=font(20),
+            color=(0.80, 0.90, 1, 1),
             size_hint=(1, 0.09),
             halign="left",
             valign="middle"
@@ -128,30 +191,15 @@ class SettingsScreen(Screen):
 
         buttons1 = BoxLayout(orientation="horizontal", spacing=6, size_hint=(1, 0.08))
 
-        refresh_btn = Button(
-            text="Refresh",
-            font_size=font(24),
-            background_normal="",
-            background_color=(0.12, 0.20, 0.35, 1)
-        )
+        refresh_btn = self.make_small_button("Refresh", BLUE)
         refresh_btn.bind(on_press=self.refresh_log)
         buttons1.add_widget(refresh_btn)
 
-        copy_line_btn = Button(
-            text="Copy Line",
-            font_size=font(24),
-            background_normal="",
-            background_color=(0.12, 0.20, 0.35, 1)
-        )
+        copy_line_btn = self.make_small_button("Copy Line", BLUE)
         copy_line_btn.bind(on_press=self.copy_selected_log_line)
         buttons1.add_widget(copy_line_btn)
 
-        copy_all_btn = Button(
-            text="Copy All",
-            font_size=font(24),
-            background_normal="",
-            background_color=(0.12, 0.20, 0.35, 1)
-        )
+        copy_all_btn = self.make_small_button("Copy All", BLUE)
         copy_all_btn.bind(on_press=self.copy_all_log)
         buttons1.add_widget(copy_all_btn)
 
@@ -159,30 +207,15 @@ class SettingsScreen(Screen):
 
         buttons2 = BoxLayout(orientation="horizontal", spacing=6, size_hint=(1, 0.08))
 
-        clear_btn = Button(
-            text="Clear Log",
-            font_size=font(24),
-            background_normal="",
-            background_color=(0.35, 0.12, 0.12, 1)
-        )
+        clear_btn = self.make_small_button("Clear Log", RED)
         clear_btn.bind(on_press=self.clear_log_confirm)
         buttons2.add_widget(clear_btn)
 
-        back_settings_btn = Button(
-            text="< Settings",
-            font_size=font(24),
-            background_normal="",
-            background_color=(0.10, 0.15, 0.25, 1)
-        )
+        back_settings_btn = self.make_small_button("< Settings", DARK)
         back_settings_btn.bind(on_press=self.build_settings_view)
         buttons2.add_widget(back_settings_btn)
 
-        home_btn = Button(
-            text="< Home",
-            font_size=font(24),
-            background_normal="",
-            background_color=(0.10, 0.15, 0.25, 1)
-        )
+        home_btn = self.make_small_button("< Home", DARK)
         home_btn.bind(on_press=self.go_back)
         buttons2.add_widget(home_btn)
 
@@ -202,7 +235,7 @@ class SettingsScreen(Screen):
         self.load_log_lines()
 
     def auto_update_text(self):
-        return "Auto update check: ON" if self.config.get("auto_update", True) else "Auto update check: OFF"
+        return "Auto Updates: ON" if self.config.get("auto_update", True) else "Auto Updates: OFF"
 
     def change_unit(self, instance, value):
         self.config.set("temperature_unit", value)
@@ -218,7 +251,10 @@ class SettingsScreen(Screen):
     def toggle_auto_update(self, instance):
         new_value = not self.config.get("auto_update", True)
         self.config.set("auto_update", new_value)
+
         self.auto_btn.text = self.auto_update_text()
+        self.auto_btn.background_color = GREEN if new_value else RED
+
         log.info(f"Settings: auto_update={new_value}")
 
     def open_updater(self, instance):
@@ -264,7 +300,8 @@ class SettingsScreen(Screen):
             halign="left",
             valign="middle",
             background_normal="",
-            background_color=(0.10, 0.15, 0.25, 1)
+            background_color=DARK,
+            color=(1, 1, 1, 1)
         )
         btn.bind(size=lambda inst, val: setattr(inst, "text_size", (val[0] - 18, val[1])))
         btn.bind(on_press=lambda instance, text=line: self.select_log_line(text))
