@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
@@ -8,6 +9,8 @@ from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.uix.spinner import Spinner
 from kivy.uix.scrollview import ScrollView
+from kivy.uix.popup import Popup
+from kivy.uix.label import Label
 
 from utils.ui_scale import font, height
 from utils.logger import log
@@ -60,6 +63,7 @@ class NoteEditorScreen(Screen):
         super().__init__(**kwargs)
 
         self.current_path = None
+        self.saved_popup = None
 
         profile = device_profile()
 
@@ -280,6 +284,43 @@ class NoteEditorScreen(Screen):
             except Exception:
                 self.body_input.text = ""
 
+    def show_saved_then_back(self):
+        box = BoxLayout(
+            orientation="vertical",
+            padding=height(12),
+            spacing=height(8)
+        )
+
+        label = Label(
+            text="Note saved",
+            font_size=editor_font(26),
+            bold=True,
+            halign="center",
+            valign="middle"
+        )
+        label.bind(size=lambda inst, val: setattr(inst, "text_size", val))
+        box.add_widget(label)
+
+        self.saved_popup = Popup(
+            title="Saved",
+            content=box,
+            size_hint=(0.70, 0.28),
+            auto_dismiss=False
+        )
+
+        self.saved_popup.open()
+        Clock.schedule_once(self.close_saved_popup_and_back, 0.7)
+
+    def close_saved_popup_and_back(self, dt):
+        try:
+            if self.saved_popup:
+                self.saved_popup.dismiss()
+        except Exception:
+            pass
+
+        self.saved_popup = None
+        self.go_back(None)
+
     def save_note(self, instance):
         title = self.title_input.text.strip() or "Untitled"
         note_type = self.type_spinner.text.strip() or "Personal"
@@ -301,6 +342,7 @@ class NoteEditorScreen(Screen):
             path.write_text(json.dumps(data, indent=4), encoding="utf-8")
             self.current_path = path
             log.info(f"Editor: saved {path.name}")
+            self.show_saved_then_back()
 
         except Exception as e:
             log.error(f"Editor: failed to save note: {e}")

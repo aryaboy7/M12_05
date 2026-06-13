@@ -250,3 +250,45 @@
 2026-06-13 08:56:01,725 | INFO | EventNotifier FINAL: started
 2026-06-13 08:56:06,248 | INFO | Home: open notes
 2026-06-13 08:56:12,645 | INFO | EventNotifier FINAL: stopped
+2026-06-13 09:18:26,994 | INFO | M12 OS 0.4.6 started
+2026-06-13 09:18:27,023 | WARNING | EventNotifier FINAL: sound not loaded: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-13 09:18:27,023 | INFO | EventNotifier FINAL: started
+2026-06-13 09:18:29,729 | INFO | Home: open notes
+2026-06-13 09:18:32,461 | INFO | Notes: New pressed
+2026-06-13 09:18:32,463 | INFO | Editor: new note
+2026-06-13 09:18:42,279 | INFO | Editor: saved 65utyyty.json
+2026-06-13 09:18:42,777 | INFO | Editor: Back pressed
+2026-06-13 09:18:50,053 | INFO | Notes: selected 65utyyty.json
+2026-06-13 09:18:52,709 | INFO | Notes: deleted 65utyyty.json
+2026-06-13 09:18:57,962 | INFO | Notes: selected Notes completed..json
+2026-06-13 09:19:01,008 | INFO | Notes: deleted Notes completed..json
+2026-06-13 09:19:31,937 | INFO | EventNotifier FINAL: stopped
+2026-06-13 09:20:30,687 | INFO | M12 OS 0.4.6 started
+2026-06-13 09:20:30,714 | WARNING | EventNotifier FINAL: sound not loaded: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-13 09:20:30,714 | INFO | EventNotifier FINAL: started
+2026-06-13 09:20:32,859 | INFO | Home: open notes
+2026-06-13 09:20:35,417 | INFO | Notes: New pressed
+2026-06-13 09:20:35,418 | INFO | Editor: new note
+2026-06-13 09:20:43,381 | INFO | Editor: saved ghsfghsfhsdfh.json
+2026-06-13 09:20:43,382 | ERROR | Editor: failed to save note: name 'show_message' is not defined
+2026-06-13 09:20:46,128 | INFO | Editor: saved ghsfghsfhsdfh.json
+2026-06-13 09:20:46,128 | ERROR | Editor: failed to save note: name 'show_message' is not defined
+2026-06-13 09:20:47,046 | INFO | Editor: saved ghsfghsfhsdfh.json
+2026-06-13 09:20:47,047 | ERROR | Editor: failed to save note: name 'show_message' is not defined
+2026-06-13 09:20:51,894 | INFO | Editor: saved ghsfghsfhsdfh.json
+2026-06-13 09:20:51,895 | ERROR | Editor: failed to save note: name 'show_message' is not defined
+2026-06-13 09:20:53,242 | INFO | Editor: Back pressed
+2026-06-13 09:21:04,195 | INFO | EventNotifier FINAL: stopped
+2026-06-13 09:55:07,379 | INFO | M12 OS 0.4.6 started
+2026-06-13 09:55:07,410 | WARNING | EventNotifier FINAL: sound not loaded: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-13 09:55:07,411 | INFO | EventNotifier FINAL: started
+2026-06-13 09:55:20,973 | INFO | Home: open notes
+2026-06-13 09:55:25,903 | INFO | Notes: New pressed
+2026-06-13 09:55:25,905 | INFO | Editor: new note
+2026-06-13 09:55:34,335 | INFO | Editor: saved c cvnbm.json
+2026-06-13 09:55:35,028 | INFO | Editor: Back pressed
+2026-06-13 09:55:43,488 | INFO | Notes: selected c cvnbm.json
+2026-06-13 09:55:45,332 | INFO | Notes: deleted c cvnbm.json
+2026-06-13 09:55:46,967 | INFO | Notes: selected ghsfghsfhsdfh.json
+2026-06-13 09:55:47,846 | INFO | Notes: deleted ghsfghsfhsdfh.json
+2026-06-13 09:56:23,343 | INFO | EventNotifier FINAL: stopped
