@@ -31,6 +31,21 @@ BACKUP_ITEMS = [
     BASE_DIR / "data" / "alarms",
 ]
 
+# Android-safe restore rules.
+# These files can be inside protected app/config area on Android.
+SKIP_RESTORE_FILES = {
+    "config/google_drive_backup.json",
+    "config/note_types.json",
+}
+
+RESTORE_ALLOWED_PREFIXES = (
+    "config/",
+    "data/notes/",
+    "data/events/",
+    "data/alarms/",
+)
+
+
 
 class BackupScreen(Screen):
     def __init__(self, **kwargs):
@@ -341,75 +356,123 @@ class BackupScreen(Screen):
         popup.open()
 
     def do_restore_selected(self):
+        """
+        Android-safe restore.
+
+        Do NOT use:
+        - zipfile.extractall()
+        - shutil.rmtree()
+        - shutil.copytree()
+        - shutil.copy2()
+
+        Android can throw [Errno 1] Operation not permitted for folder deletion,
+        metadata copying, or some protected config files. This restore writes
+        plain bytes only and skips blocked files instead of crashing.
+        """
+        restored = 0
+        skipped = 0
+        failed = 0
+        first_error = ""
+
         try:
             saved_google_link = self.load_google_drive_link()
-            restore_tmp = BASE_DIR / "data" / "restore_tmp"
 
-            if restore_tmp.exists():
-                shutil.rmtree(restore_tmp)
-            restore_tmp.mkdir(parents=True, exist_ok=True)
+            if not self.selected_backup or not self.selected_backup.exists():
+                self.restore_status.text = "Restore failed:\nBackup file not found."
+                return
 
             with zipfile.ZipFile(self.selected_backup, "r") as zf:
-                zf.extractall(restore_tmp)
+                for info in zf.infolist():
+                    name = info.filename.replace("\\", "/").lstrip("/")
 
-            self.restore_config_folder(restore_tmp, saved_google_link)
-            self.restore_data_folder(restore_tmp, "notes")
-            self.restore_data_folder(restore_tmp, "events")
-            self.restore_data_folder(restore_tmp, "alarms")
+                    if not name or name.endswith("/"):
+                        skipped += 1
+                        continue
 
-            shutil.rmtree(restore_tmp, ignore_errors=True)
+                    if name.startswith("__MACOSX/") or "/__MACOSX/" in name:
+                        skipped += 1
+                        continue
+
+                    # Safety: never allow ZIP paths to escape BASE_DIR.
+                    parts = Path(name).parts
+                    if ".." in parts:
+                        skipped += 1
+                        continue
+
+                    if name in SKIP_RESTORE_FILES:
+                        skipped += 1
+                        log.info(f"Restore skipped protected file: {name}")
+                        continue
+
+                    if not name.startswith(RESTORE_ALLOWED_PREFIXES):
+                        skipped += 1
+                        continue
+
+                    target = BASE_DIR / name
+
+                    try:
+                        target.parent.mkdir(parents=True, exist_ok=True)
+                        data = zf.read(info)
+                        target.write_bytes(data)
+                        restored += 1
+
+                    except PermissionError as e:
+                        skipped += 1
+                        failed += 1
+                        if not first_error:
+                            first_error = f"{name}: {e}"
+                        log.error(f"Restore permission skipped {name}: {e}")
+                        continue
+
+                    except OSError as e:
+                        skipped += 1
+                        failed += 1
+                        if not first_error:
+                            first_error = f"{name}: {e}"
+                        log.error(f"Restore OS error skipped {name}: {e}")
+                        continue
+
+            # Preserve the current Google Drive link when possible.
             self.save_google_drive_link(saved_google_link)
 
-            self.restore_status.text = (
+            msg = (
                 "Restore Complete\n"
-                "Google Drive link preserved.\n"
+                f"Files restored: {restored}\n"
+                f"Files skipped: {skipped}\n"
                 "Restart M12 OS recommended."
             )
 
+            if failed:
+                msg += (
+                    "\n\nSome Android-protected files were skipped.\n"
+                    f"First skipped error:\n{first_error}"
+                )
+
+            self.restore_status.text = msg
+
             self.refresh_after_restore()
-            log.info(f"Backup restored: {self.selected_backup}")
+            log.info(
+                f"Backup restored: {self.selected_backup} "
+                f"restored={restored} skipped={skipped} failed={failed}"
+            )
 
         except Exception as e:
-            self.restore_status.text = f"Restore failed:\n{e}"
-            log.error(f"Restore failed: {e}")
+            self.restore_status.text = f"Restore failed:\n{type(e).__name__}\n{e}"
+            log.error(f"Restore failed: {type(e).__name__}: {e}")
 
     def restore_config_folder(self, restore_tmp, saved_google_link):
-        src = restore_tmp / "config"
-        dst = BASE_DIR / "config"
-        dst.mkdir(parents=True, exist_ok=True)
-
-        if not src.exists():
-            self.save_google_drive_link(saved_google_link)
-            return
-
-        for path in src.rglob("*"):
-            if not path.is_file():
-                continue
-
-            rel = path.relative_to(src)
-
-            # Never overwrite the current Google Drive backup link.
-            if str(rel) == "google_drive_backup.json":
-                continue
-
-            target = dst / rel
-            target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(path, target)
-
-        self.save_google_drive_link(saved_google_link)
+        """
+        Kept for compatibility with older code paths.
+        New restore does not call this method.
+        """
+        return
 
     def restore_data_folder(self, restore_tmp, folder_name):
-        src = restore_tmp / "data" / folder_name
-        dst = BASE_DIR / "data" / folder_name
-
-        if not src.exists():
-            return
-
-        if dst.exists():
-            shutil.rmtree(dst)
-
-        dst.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copytree(src, dst)
+        """
+        Kept for compatibility with older code paths.
+        New restore does not call this method.
+        """
+        return
 
     def refresh_after_restore(self):
         try:
