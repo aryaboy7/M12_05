@@ -39,6 +39,9 @@ class BackupScreen(Screen):
         self.selected_backup = None
         self.mode = "backup"
         self.google_status = None
+        self.status_label = None
+        self.restore_status = None
+        self.backup_list = None
 
         self.build_screen()
 
@@ -50,11 +53,24 @@ class BackupScreen(Screen):
             text=text,
             font_size=font(24),
             background_normal="",
-            background_color=color
+            background_color=color,
         )
+
+    def make_wrapped_label(self, text, font_size, size_hint, bold=False):
+        label = Label(
+            text=text,
+            font_size=font(font_size),
+            bold=bold,
+            size_hint=size_hint,
+            halign="center",
+            valign="middle",
+        )
+        label.bind(size=lambda inst, val: setattr(inst, "text_size", val))
+        return label
 
     def build_screen(self):
         self.clear_screen()
+        self.ensure_google_config_file()
 
         root = BoxLayout(orientation="vertical", padding=12, spacing=8)
 
@@ -62,7 +78,7 @@ class BackupScreen(Screen):
             text="Backup",
             font_size=font(38),
             bold=True,
-            size_hint=(1, 0.10)
+            size_hint=(1, 0.10),
         ))
 
         tabs = BoxLayout(orientation="horizontal", spacing=8, size_hint=(1, 0.10))
@@ -96,8 +112,6 @@ class BackupScreen(Screen):
         root.add_widget(bottom)
 
         self.add_widget(root)
-
-        self.ensure_google_config_file()
         self.show_backup_tab(None)
 
     def reset_tabs(self):
@@ -110,37 +124,25 @@ class BackupScreen(Screen):
         self.selected_backup = None
         self.body.clear_widgets()
         self.reset_tabs()
-
         self.backup_tab.background_color = (0.10, 0.45, 0.20, 1)
 
-        info = Label(
-            text="Create backup of settings, notes, calendar, and alarms.",
-            font_size=font(22),
-            size_hint=(1, 0.22),
-            halign="center",
-            valign="middle"
-        )
-        info.bind(size=lambda inst, val: setattr(inst, "text_size", val))
-        self.body.add_widget(info)
+        self.body.add_widget(self.make_wrapped_label(
+            "Create backup of settings, notes, calendar, and alarms.",
+            22,
+            (1, 0.22),
+        ))
 
         create_btn = Button(
             text="Create Backup",
             font_size=font(30),
             size_hint=(1, 0.18),
             background_normal="",
-            background_color=(0.10, 0.45, 0.20, 1)
+            background_color=(0.10, 0.45, 0.20, 1),
         )
         create_btn.bind(on_press=self.create_backup)
         self.body.add_widget(create_btn)
 
-        self.status_label = Label(
-            text="",
-            font_size=font(20),
-            size_hint=(1, 0.40),
-            halign="center",
-            valign="middle"
-        )
-        self.status_label.bind(size=lambda inst, val: setattr(inst, "text_size", val))
+        self.status_label = self.make_wrapped_label("", 20, (1, 0.40))
         self.body.add_widget(self.status_label)
 
     def show_restore_tab(self, instance):
@@ -148,24 +150,14 @@ class BackupScreen(Screen):
         self.selected_backup = None
         self.body.clear_widgets()
         self.reset_tabs()
-
         self.restore_tab.background_color = (0.10, 0.45, 0.20, 1)
 
-        self.restore_status = Label(
-            text="Select backup file.",
-            font_size=font(20),
-            size_hint=(1, 0.10),
-            halign="center",
-            valign="middle"
-        )
-        self.restore_status.bind(size=lambda inst, val: setattr(inst, "text_size", val))
+        self.restore_status = self.make_wrapped_label("Select backup file.", 20, (1, 0.10))
         self.body.add_widget(self.restore_status)
 
         scroll = ScrollView(size_hint=(1, 0.43), do_scroll_x=False, do_scroll_y=True)
-
         self.backup_list = GridLayout(cols=1, spacing=5, size_hint_y=None)
         self.backup_list.bind(minimum_height=self.backup_list.setter("height"))
-
         scroll.add_widget(self.backup_list)
         self.body.add_widget(scroll)
 
@@ -174,7 +166,7 @@ class BackupScreen(Screen):
             font_size=font(25),
             size_hint=(1, 0.12),
             background_normal="",
-            background_color=(0.45, 0.30, 0.10, 1)
+            background_color=(0.45, 0.30, 0.10, 1),
         )
         restore_btn.bind(on_press=self.ask_restore_confirmation)
         self.body.add_widget(restore_btn)
@@ -184,7 +176,7 @@ class BackupScreen(Screen):
             font_size=font(25),
             size_hint=(1, 0.12),
             background_normal="",
-            background_color=(0.50, 0.15, 0.15, 1)
+            background_color=(0.50, 0.15, 0.15, 1),
         )
         delete_btn.bind(on_press=self.ask_delete_confirmation)
         self.body.add_widget(delete_btn)
@@ -196,41 +188,27 @@ class BackupScreen(Screen):
         self.selected_backup = None
         self.body.clear_widgets()
         self.reset_tabs()
-
         self.google_tab.background_color = (0.10, 0.45, 0.20, 1)
 
-        self.body.add_widget(Label(
-            text="Google Drive Restore",
-            font_size=font(28),
-            bold=True,
-            size_hint=(1, 0.10),
-            halign="center",
-            valign="middle"
-        ))
+        self.body.add_widget(self.make_wrapped_label("Google Drive Restore", 28, (1, 0.10), bold=True))
 
         link = self.load_google_drive_link()
         link_state = "Configured" if link else "Not configured"
 
-        info = Label(
-            text=(
-                "Google Drive backup link is read from:\n"
-                "config/google_drive_backup.json\n\n"
-                f"Current Link: {link_state}"
-            ),
-            font_size=font(19),
-            size_hint=(1, 0.28),
-            halign="center",
-            valign="middle"
-        )
-        info.bind(size=lambda inst, val: setattr(inst, "text_size", val))
-        self.body.add_widget(info)
+        self.body.add_widget(self.make_wrapped_label(
+            "Google Drive backup link is read from:\n"
+            "config/google_drive_backup.json\n\n"
+            f"Current Link: {link_state}",
+            19,
+            (1, 0.28),
+        ))
 
         download_btn = Button(
             text="Download Backup",
             font_size=font(30),
             size_hint=(1, 0.16),
             background_normal="",
-            background_color=(0.45, 0.30, 0.10, 1)
+            background_color=(0.45, 0.30, 0.10, 1),
         )
         download_btn.bind(on_press=self.download_google_drive_backup)
         self.body.add_widget(download_btn)
@@ -240,28 +218,21 @@ class BackupScreen(Screen):
             font_size=font(24),
             size_hint=(1, 0.12),
             background_normal="",
-            background_color=(0.50, 0.15, 0.15, 1)
+            background_color=(0.50, 0.15, 0.15, 1),
         )
         clear_btn.bind(on_press=self.clear_google_drive_link)
         self.body.add_widget(clear_btn)
 
-        self.google_status = Label(
-            text=(
-                "To set link, edit:\n"
-                "config/google_drive_backup.json"
-            ),
-            font_size=font(18),
-            size_hint=(1, 0.28),
-            halign="center",
-            valign="middle"
+        self.google_status = self.make_wrapped_label(
+            "To set link, edit:\nconfig/google_drive_backup.json",
+            18,
+            (1, 0.28),
         )
-        self.google_status.bind(size=lambda inst, val: setattr(inst, "text_size", val))
         self.body.add_widget(self.google_status)
 
     def create_backup(self, instance):
         try:
             BACKUP_DIR.mkdir(parents=True, exist_ok=True)
-
             stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             backup_file = BACKUP_DIR / f"m12_backup_{stamp}.zip"
 
@@ -269,16 +240,12 @@ class BackupScreen(Screen):
                 for item in BACKUP_ITEMS:
                     if not item.exists():
                         continue
-
                     if item.is_file():
-                        arcname = item.relative_to(BASE_DIR)
-                        zf.write(item, arcname)
+                        zf.write(item, item.relative_to(BASE_DIR))
                         continue
-
                     for path in item.rglob("*"):
                         if path.is_file():
-                            arcname = path.relative_to(BASE_DIR)
-                            zf.write(path, arcname)
+                            zf.write(path, path.relative_to(BASE_DIR))
 
             self.status_label.text = f"Backup Completed\n\n{backup_file.name}"
             log.info(f"Backup created: {backup_file}")
@@ -289,13 +256,12 @@ class BackupScreen(Screen):
 
     def load_backup_list(self):
         self.backup_list.clear_widgets()
-
         BACKUP_DIR.mkdir(parents=True, exist_ok=True)
 
         backups = sorted(
             BACKUP_DIR.glob("*.zip"),
             key=lambda p: p.stat().st_mtime,
-            reverse=True
+            reverse=True,
         )
 
         if not backups:
@@ -311,7 +277,7 @@ class BackupScreen(Screen):
                 background_normal="",
                 background_color=(0.10, 0.15, 0.25, 1),
                 halign="center",
-                valign="middle"
+                valign="middle",
             )
             btn.bind(size=lambda inst, val: setattr(inst, "text_size", val))
             btn.bind(on_press=lambda instance, p=backup: self.select_backup(p))
@@ -327,36 +293,30 @@ class BackupScreen(Screen):
             return
 
         box = BoxLayout(orientation="vertical", padding=height(10), spacing=height(8))
-
-        msg = Label(
-            text=(
-                "Restore Backup?\n\n"
-                f"{self.selected_backup.name}\n\n"
-                "Current settings/data will be replaced."
-            ),
-            font_size=font(22),
-            halign="center",
-            valign="middle"
+        msg = self.make_wrapped_label(
+            "Restore Backup?\n\n"
+            f"{self.selected_backup.name}\n\n"
+            "Current settings/data will be replaced.\n"
+            "Google Drive link will be preserved.",
+            22,
+            (1, 0.75),
         )
         msg.bind(size=lambda inst, val: setattr(inst, "text_size", (val[0] - height(20), val[1])))
         box.add_widget(msg)
 
         buttons = BoxLayout(orientation="horizontal", spacing=height(8), size_hint=(1, 0.25))
-
         yes_btn = Button(
             text="Yes Restore",
             font_size=font(24),
             background_normal="",
-            background_color=(0.50, 0.15, 0.15, 1)
+            background_color=(0.50, 0.15, 0.15, 1),
         )
-
         no_btn = Button(
             text="No",
             font_size=font(24),
             background_normal="",
-            background_color=(0.12, 0.20, 0.35, 1)
+            background_color=(0.12, 0.20, 0.35, 1),
         )
-
         buttons.add_widget(yes_btn)
         buttons.add_widget(no_btn)
         box.add_widget(buttons)
@@ -365,7 +325,7 @@ class BackupScreen(Screen):
             title="Confirm Restore",
             content=box,
             size_hint=(0.90, 0.65),
-            auto_dismiss=False
+            auto_dismiss=False,
         )
 
         def confirm(instance):
@@ -378,91 +338,136 @@ class BackupScreen(Screen):
 
         yes_btn.bind(on_press=confirm)
         no_btn.bind(on_press=cancel)
-
         popup.open()
 
     def do_restore_selected(self):
         try:
+            saved_google_link = self.load_google_drive_link()
             restore_tmp = BASE_DIR / "data" / "restore_tmp"
 
             if restore_tmp.exists():
                 shutil.rmtree(restore_tmp)
-
             restore_tmp.mkdir(parents=True, exist_ok=True)
 
             with zipfile.ZipFile(self.selected_backup, "r") as zf:
                 zf.extractall(restore_tmp)
 
-            for folder_name in ["config", "data/notes", "data/events", "data/alarms"]:
-                src = restore_tmp / folder_name
-                dst = BASE_DIR / folder_name
+            self.restore_config_folder(restore_tmp, saved_google_link)
+            self.restore_data_folder(restore_tmp, "notes")
+            self.restore_data_folder(restore_tmp, "events")
+            self.restore_data_folder(restore_tmp, "alarms")
 
-                if not src.exists():
-                    continue
-
-                if dst.exists():
-                    shutil.rmtree(dst)
-
-                dst.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copytree(src, dst)
-
-            shutil.rmtree(restore_tmp)
+            shutil.rmtree(restore_tmp, ignore_errors=True)
+            self.save_google_drive_link(saved_google_link)
 
             self.restore_status.text = (
                 "Restore Complete\n"
+                "Google Drive link preserved.\n"
                 "Restart M12 OS recommended."
             )
 
+            self.refresh_after_restore()
             log.info(f"Backup restored: {self.selected_backup}")
 
         except Exception as e:
             self.restore_status.text = f"Restore failed:\n{e}"
             log.error(f"Restore failed: {e}")
 
+    def restore_config_folder(self, restore_tmp, saved_google_link):
+        src = restore_tmp / "config"
+        dst = BASE_DIR / "config"
+        dst.mkdir(parents=True, exist_ok=True)
+
+        if not src.exists():
+            self.save_google_drive_link(saved_google_link)
+            return
+
+        for path in src.rglob("*"):
+            if not path.is_file():
+                continue
+
+            rel = path.relative_to(src)
+
+            # Never overwrite the current Google Drive backup link.
+            if str(rel) == "google_drive_backup.json":
+                continue
+
+            target = dst / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, target)
+
+        self.save_google_drive_link(saved_google_link)
+
+    def restore_data_folder(self, restore_tmp, folder_name):
+        src = restore_tmp / "data" / folder_name
+        dst = BASE_DIR / "data" / folder_name
+
+        if not src.exists():
+            return
+
+        if dst.exists():
+            shutil.rmtree(dst)
+
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copytree(src, dst)
+
+    def refresh_after_restore(self):
+        try:
+            if self.manager and self.manager.has_screen("calendar"):
+                cal = self.manager.get_screen("calendar")
+
+                if hasattr(cal, "load_events") and hasattr(cal, "normalize_event"):
+                    cal.events = [cal.normalize_event(e) for e in cal.load_events()]
+
+                    if hasattr(cal, "sort_events"):
+                        cal.sort_events()
+
+                    cal.selected_index = None
+
+                    if hasattr(cal, "build_list_view"):
+                        cal.build_list_view()
+
+            if self.manager and self.manager.has_screen("home"):
+                home = self.manager.get_screen("home")
+
+                if hasattr(home, "refresh_calendar_button"):
+                    home.refresh_calendar_button()
+
+                if hasattr(home, "refresh_clock_button"):
+                    home.refresh_clock_button()
+
+        except Exception as e:
+            log.error(f"Backup restore refresh failed: {e}")
+
     def ask_delete_confirmation(self, instance):
         if not self.selected_backup:
             self.restore_status.text = "Select a backup first."
             return
 
-        box = BoxLayout(
-            orientation="vertical",
-            padding=height(10),
-            spacing=height(8)
-        )
-
-        msg = Label(
-            text=(
-                "Delete Backup?\n\n"
-                f"{self.selected_backup.name}\n\n"
-                "This cannot be undone."
-            ),
-            font_size=font(22),
-            halign="center",
-            valign="middle"
+        box = BoxLayout(orientation="vertical", padding=height(10), spacing=height(8))
+        msg = self.make_wrapped_label(
+            "Delete Backup?\n\n"
+            f"{self.selected_backup.name}\n\n"
+            "This cannot be undone.",
+            22,
+            (1, 0.75),
         )
         msg.bind(size=lambda inst, val: setattr(inst, "text_size", (val[0] - height(20), val[1])))
         box.add_widget(msg)
 
-        buttons = BoxLayout(
-            orientation="horizontal",
-            spacing=height(8),
-            size_hint=(1, 0.25)
-        )
-
+        buttons = BoxLayout(orientation="horizontal", spacing=height(8), size_hint=(1, 0.25))
         delete_btn = Button(
             text="Delete",
             font_size=font(24),
             background_normal="",
-            background_color=(0.50, 0.15, 0.15, 1)
+            background_color=(0.50, 0.15, 0.15, 1),
         )
-
         cancel_btn = Button(
             text="Cancel",
             font_size=font(24),
             background_normal="",
-            background_color=(0.12, 0.20, 0.35, 1)
+            background_color=(0.12, 0.20, 0.35, 1),
         )
-
         buttons.add_widget(delete_btn)
         buttons.add_widget(cancel_btn)
         box.add_widget(buttons)
@@ -471,7 +476,7 @@ class BackupScreen(Screen):
             title="Confirm Delete",
             content=box,
             size_hint=(0.90, 0.65),
-            auto_dismiss=False
+            auto_dismiss=False,
         )
 
         def confirm_delete(instance):
@@ -484,7 +489,6 @@ class BackupScreen(Screen):
 
         delete_btn.bind(on_press=confirm_delete)
         cancel_btn.bind(on_press=cancel_delete)
-
         popup.open()
 
     def delete_selected_backup(self):
@@ -501,9 +505,7 @@ class BackupScreen(Screen):
 
             self.selected_backup = None
             self.restore_status.text = f"Deleted:\n{backup_name}"
-
             self.load_backup_list()
-
             log.info(f"Backup deleted: {backup_name}")
 
         except Exception as e:
@@ -517,7 +519,7 @@ class BackupScreen(Screen):
             if not GOOGLE_CONFIG_FILE.exists():
                 GOOGLE_CONFIG_FILE.write_text(
                     json.dumps({"backup_link": ""}, indent=4),
-                    encoding="utf-8"
+                    encoding="utf-8",
                 )
                 log.info(f"Google Drive config created: {GOOGLE_CONFIG_FILE}")
 
@@ -527,7 +529,6 @@ class BackupScreen(Screen):
     def load_google_drive_link(self):
         try:
             self.ensure_google_config_file()
-
             data = json.loads(GOOGLE_CONFIG_FILE.read_text(encoding="utf-8"))
 
             if isinstance(data, dict):
@@ -543,7 +544,7 @@ class BackupScreen(Screen):
             GOOGLE_CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
             GOOGLE_CONFIG_FILE.write_text(
                 json.dumps({"backup_link": link.strip()}, indent=4),
-                encoding="utf-8"
+                encoding="utf-8",
             )
             log.info("Google Drive backup link saved")
             return True
@@ -555,13 +556,11 @@ class BackupScreen(Screen):
     def clear_google_drive_link(self, instance):
         try:
             self.save_google_drive_link("")
-
             if self.google_status:
                 self.google_status.text = (
                     "Link cleared.\n"
                     "Edit config/google_drive_backup.json to set new link."
                 )
-
             self.show_google_drive_tab(None)
 
         except Exception as e:
@@ -583,9 +582,6 @@ class BackupScreen(Screen):
 
         if "id" in query and query["id"]:
             return query["id"][0]
-
-        if "drive.google.com/uc" in link and "id=" in link:
-            return query.get("id", [""])[0]
 
         return ""
 
@@ -616,7 +612,6 @@ class BackupScreen(Screen):
 
         try:
             BACKUP_DIR.mkdir(parents=True, exist_ok=True)
-
             temp_file = BACKUP_DIR / "google_drive_backup_download.tmp"
             final_file = GOOGLE_BACKUP_FILE
 
@@ -624,7 +619,7 @@ class BackupScreen(Screen):
 
             req = urllib.request.Request(
                 direct_url,
-                headers={"User-Agent": "Mozilla/5.0"}
+                headers={"User-Agent": "Mozilla/5.0"},
             )
 
             with urllib.request.urlopen(req, timeout=45) as response:
@@ -652,7 +647,6 @@ class BackupScreen(Screen):
             )
 
             log.info(f"Google Drive backup downloaded: {final_file}")
-
             self.show_restore_tab(None)
 
         except Exception as e:
