@@ -5,6 +5,7 @@ from pathlib import Path
 
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.core.audio import SoundLoader
 from kivy.utils import platform
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
@@ -27,12 +28,14 @@ class AlarmNotifier:
         self.interval_seconds = interval_seconds
         self.running = False
         self.popup_open = False
+        self.sound = None
 
     def start(self):
         if self.running:
             return
 
         self.running = True
+        self.load_sound()
 
         Clock.unschedule(self.check)
         Clock.schedule_interval(self.check, self.interval_seconds)
@@ -44,6 +47,73 @@ class AlarmNotifier:
         Clock.unschedule(self.check)
         self.running = False
         log.info("AlarmNotifier: stopped")
+
+    def load_sound(self):
+        try:
+            if not SOUND_FILE.exists():
+                self.sound = None
+                log.warning(f"AlarmNotifier: sound file missing {SOUND_FILE}")
+                return
+
+            if platform == "macosx":
+                self.sound = None
+                log.info(f"AlarmNotifier: macOS sound ready for afplay {SOUND_FILE}")
+                return
+
+            self.sound = SoundLoader.load(str(SOUND_FILE))
+
+            if self.sound:
+                log.info(f"AlarmNotifier: SoundLoader loaded {SOUND_FILE}")
+            else:
+                log.warning(f"AlarmNotifier: SoundLoader could not load {SOUND_FILE}")
+
+        except Exception as e:
+            self.sound = None
+            log.error(f"AlarmNotifier: sound load failed {e}")
+
+    def play_sound(self):
+        try:
+            if not SOUND_FILE.exists():
+                log.warning(f"AlarmNotifier: sound missing {SOUND_FILE}")
+                print("\a", end="", flush=True)
+                return
+
+            if platform == "macosx":
+                try:
+                    subprocess.Popen(
+                        ["afplay", str(SOUND_FILE)],
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL
+                    )
+                    log.info(f"AlarmNotifier: sound played with afplay {SOUND_FILE}")
+                    return
+                except Exception as e:
+                    log.error(f"AlarmNotifier: afplay failed {e}")
+
+            if self.sound:
+                try:
+                    self.sound.stop()
+                    self.sound.seek(0)
+                except Exception:
+                    pass
+
+                self.sound.play()
+                log.info("AlarmNotifier: sound played with cached SoundLoader")
+                return
+
+            sound = SoundLoader.load(str(SOUND_FILE))
+
+            if sound:
+                self.sound = sound
+                sound.play()
+                log.info("AlarmNotifier: sound loaded late and played")
+                return
+
+            print("\a", end="", flush=True)
+            log.warning(f"AlarmNotifier: no sound provider could play {SOUND_FILE}")
+
+        except Exception as e:
+            log.error(f"AlarmNotifier: sound failed {e}")
 
     def load_alarms(self):
         if not ALARMS_FILE.exists():
@@ -123,28 +193,6 @@ class AlarmNotifier:
 
         if changed:
             self.save_alarms(alarms)
-
-    def play_sound(self):
-        try:
-            if not SOUND_FILE.exists():
-                log.warning(f"AlarmNotifier: sound missing {SOUND_FILE}")
-                print("\a", end="", flush=True)
-                return
-
-            if platform == "macosx":
-                subprocess.Popen(
-                    ["afplay", str(SOUND_FILE)],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL
-                )
-                log.info(f"AlarmNotifier: sound played {SOUND_FILE}")
-                return
-
-            print("\a", end="", flush=True)
-            log.info("AlarmNotifier: fallback bell used")
-
-        except Exception as e:
-            log.error(f"AlarmNotifier: sound failed {e}")
 
     def show_popup(self, alarm):
         if self.popup_open:

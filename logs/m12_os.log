@@ -197,3 +197,44 @@
 2026-06-13 19:41:23,652 | INFO | AlarmNotifier: started
 2026-06-13 19:43:32,261 | INFO | EventNotifier FINAL: stopped
 2026-06-13 19:43:32,261 | INFO | AlarmNotifier: stopped
+2026-06-13 20:08:39,523 | INFO | M12 OS 0.4.9 started
+2026-06-13 20:08:39,567 | INFO | EventNotifier FINAL: macOS sound ready for afplay: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-13 20:08:39,567 | INFO | EventNotifier FINAL: started
+2026-06-13 20:08:39,567 | INFO | AlarmNotifier: macOS sound ready for afplay /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-13 20:08:39,567 | INFO | AlarmNotifier: started
+2026-06-13 20:08:42,060 | INFO | Home: open settings
+2026-06-13 20:08:49,369 | INFO | Home: open clock
+2026-06-13 20:08:49,785 | INFO | Clock: opened
+2026-06-13 20:08:50,506 | INFO | Clock: Alarm pressed
+2026-06-13 20:09:08,861 | INFO | Alarm saved
+2026-06-13 20:09:10,075 | INFO | Clock: opened
+2026-06-13 20:10:09,131 | INFO | AlarmNotifier: sound played with afplay /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-13 20:10:09,135 | INFO | AlarmNotifier: popup shown 20:10
+2026-06-13 20:10:21,374 | INFO | EventNotifier FINAL: stopped
+2026-06-13 20:10:21,374 | INFO | AlarmNotifier: stopped
+2026-06-13 21:01:12,958 | INFO | M12 OS 0.4.9 started
+2026-06-13 21:01:13,002 | INFO | EventNotifier FINAL: macOS sound ready for afplay: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-13 21:01:13,002 | INFO | EventNotifier FINAL: started
+2026-06-13 21:01:13,002 | INFO | AlarmNotifier: macOS sound ready for afplay /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-13 21:01:13,002 | INFO | AlarmNotifier: started
+2026-06-13 21:01:18,175 | INFO | Home: open calendar
+2026-06-13 21:02:18,930 | INFO | Calendar: added Medication Morning
+2026-06-13 21:02:18,933 | INFO | Calendar: events saved
+2026-06-13 21:03:24,481 | INFO | Calendar: added Untitled Event
+2026-06-13 21:03:24,484 | INFO | Calendar: events saved
+2026-06-13 21:03:28,683 | INFO | Calendar: selected event 7
+2026-06-13 21:03:32,114 | INFO | Calendar: selected event 7
+2026-06-13 21:03:48,460 | INFO | Calendar: edited Medication Morning
+2026-06-13 21:03:48,463 | INFO | Calendar: events saved
+2026-06-13 21:04:02,326 | INFO | Calendar: selected event 7
+2026-06-13 21:04:14,227 | INFO | Calendar: edited Medication Evening
+2026-06-13 21:04:14,230 | INFO | Calendar: events saved
+2026-06-13 21:05:32,885 | INFO | EventNotifier FINAL: stopped
+2026-06-13 21:05:32,886 | INFO | AlarmNotifier: stopped
+2026-06-13 21:07:29,724 | INFO | M12 OS 0.4.9 started
+2026-06-13 21:07:29,763 | INFO | EventNotifier FINAL: macOS sound ready for afplay: /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-13 21:07:29,763 | INFO | EventNotifier FINAL: started
+2026-06-13 21:07:29,763 | INFO | AlarmNotifier: macOS sound ready for afplay /Users/aryaboy/Documents/M12_OS/data/sounds/reminder.wav
+2026-06-13 21:07:29,763 | INFO | AlarmNotifier: started
+2026-06-13 21:08:48,675 | INFO | EventNotifier FINAL: stopped
+2026-06-13 21:08:48,676 | INFO | AlarmNotifier: stopped

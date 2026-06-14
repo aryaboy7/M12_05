@@ -21,6 +21,8 @@ EVENTS_FILE = BASE_DIR / "data" / "events" / "events.json"
 SOUNDS_DIR = BASE_DIR / "data" / "sounds"
 REMINDER_SOUND = SOUNDS_DIR / "reminder.wav"
 
+DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
 REMINDER_MINUTES = {
     "None": None,
     "Event Time": 0,
@@ -31,7 +33,6 @@ REMINDER_MINUTES = {
     "1h": 60,
     "1 day": 1440,
 
-    # old labels compatibility
     "At event time": 0,
     "5 minutes before": 5,
     "15 minutes before": 15,
@@ -88,12 +89,12 @@ class EventNotifier:
         except Exception as e:
             self.sound = None
             log.error(f"EventNotifier FINAL: sound load failed {e}")
- 
+
     def play_sound(self):
         try:
             if not REMINDER_SOUND.exists():
                 log.warning(f"EventNotifier FINAL: sound file missing: {REMINDER_SOUND}")
-                print("\\a", end="", flush=True)
+                print("\a", end="", flush=True)
                 return
 
             if platform == "macosx":
@@ -127,7 +128,7 @@ class EventNotifier:
                 log.info("EventNotifier FINAL: sound loaded late and played")
                 return
 
-            print("\\a", end="", flush=True)
+            print("\a", end="", flush=True)
             log.warning(f"EventNotifier FINAL: SoundLoader could not load {REMINDER_SOUND}")
 
         except Exception as e:
@@ -139,10 +140,8 @@ class EventNotifier:
 
         try:
             data = json.loads(EVENTS_FILE.read_text(encoding="utf-8"))
-
             if isinstance(data, list):
                 return data
-
         except Exception as e:
             log.error(f"EventNotifier FINAL: load failed {e}")
 
@@ -154,14 +153,6 @@ class EventNotifier:
             EVENTS_FILE.write_text(json.dumps(events, indent=4), encoding="utf-8")
         except Exception as e:
             log.error(f"EventNotifier FINAL: save failed {e}")
-
-    def parse_event_datetime(self, event):
-        try:
-            date_text = str(event.get("date", "")).strip()
-            time_text = str(event.get("time", "")).strip() or "00:00"
-            return datetime.strptime(f"{date_text} {time_text}", "%Y-%m-%d %H:%M")
-        except Exception:
-            return None
 
     def normalize_reminder(self, reminder):
         reminder = str(reminder).strip() or "None"
@@ -178,27 +169,63 @@ class EventNotifier:
 
         return old_map.get(reminder, reminder)
 
-    def reminder_datetime(self, event):
+    def parse_event_datetime(self, event):
+        try:
+            date_text = str(event.get("date", "")).strip()
+            time_text = str(event.get("time", "")).strip() or "00:00"
+            return datetime.strptime(f"{date_text} {time_text}", "%Y-%m-%d %H:%M")
+        except Exception:
+            return None
+
+    def is_recurring(self, event):
+        return event.get("repeat_mode", "once") in ("every_day", "days")
+
+    def get_today_occurrence(self, event, now):
+        base_dt = self.parse_event_datetime(event)
+        if not base_dt:
+            return None
+
+        repeat_mode = event.get("repeat_mode", "once")
+        today = now.date()
+
+        if repeat_mode == "once":
+            return base_dt
+
+        if today < base_dt.date():
+            return None
+
+        until_date = str(event.get("until_date", "")).strip()
+        if until_date:
+            try:
+                until = datetime.strptime(until_date, "%Y-%m-%d").date()
+                if today > until:
+                    return None
+            except Exception:
+                pass
+
+        if repeat_mode == "every_day":
+            return datetime.combine(today, base_dt.time())
+
+        if repeat_mode == "days":
+            today_name = DAY_NAMES[now.weekday()]
+            days = event.get("days", [])
+            if today_name not in days:
+                return None
+            return datetime.combine(today, base_dt.time())
+
+        return base_dt
+
+    def reminder_datetime_for_occurrence(self, event, occurrence_dt):
         reminder = self.normalize_reminder(event.get("reminder", "None"))
         minutes = REMINDER_MINUTES.get(reminder)
 
         if minutes is None:
             return None
 
-        event_dt = self.parse_event_datetime(event)
+        return occurrence_dt - timedelta(minutes=minutes)
 
-        if not event_dt:
-            return None
-
-        return event_dt - timedelta(minutes=minutes)
-
-    def remaining_text(self, event):
-        event_dt = self.parse_event_datetime(event)
-
-        if not event_dt:
-            return "Invalid date/time"
-
-        diff = event_dt - datetime.now()
+    def remaining_text(self, occurrence_dt):
+        diff = occurrence_dt - datetime.now()
 
         if diff.total_seconds() <= 0:
             return "Event time is now"
@@ -223,40 +250,56 @@ class EventNotifier:
             return
 
         now = datetime.now()
+        today_key = now.strftime("%Y-%m-%d")
         changed = False
 
         for event in events:
             reminder = self.normalize_reminder(event.get("reminder", "None"))
-            event_dt = self.parse_event_datetime(event)
+            occurrence_dt = self.get_today_occurrence(event, now)
 
-            if not event_dt:
+            if not occurrence_dt:
                 continue
 
-            # Reminder-before popup.
-            if reminder != "None" and not event.get("reminder_notified", False):
-                remind_at = self.reminder_datetime(event)
+            recurring = self.is_recurring(event)
 
-                if remind_at and now >= remind_at and now < event_dt:
-                    event["reminder_notified"] = True
-                    changed = True
-                    self.show_popup(event, popup_type="REMINDER")
+            # Reminder popup.
+            if reminder != "None":
+                remind_at = self.reminder_datetime_for_occurrence(event, occurrence_dt)
 
-            # Event-time popup, separate from reminder-before popup.
-            if not event.get("event_notified", False):
-                if now >= event_dt and now <= event_dt + timedelta(minutes=2):
-                    event["event_notified"] = True
-                    changed = True
-                    self.show_popup(event, popup_type="EVENT TIME")
+                if remind_at and now >= remind_at and now < occurrence_dt:
+                    if recurring:
+                        if event.get("last_reminder_date", "") != today_key:
+                            event["last_reminder_date"] = today_key
+                            changed = True
+                            self.show_popup(event, occurrence_dt, popup_type="REMINDER")
+                    else:
+                        if not event.get("reminder_notified", False):
+                            event["reminder_notified"] = True
+                            changed = True
+                            self.show_popup(event, occurrence_dt, popup_type="REMINDER")
 
-                elif now > event_dt + timedelta(minutes=2):
-                    # Do not show very old popups after restart.
+            # Event-time popup.
+            if now >= occurrence_dt and now <= occurrence_dt + timedelta(minutes=2):
+                if recurring:
+                    if event.get("last_event_date", "") != today_key:
+                        event["last_event_date"] = today_key
+                        changed = True
+                        self.show_popup(event, occurrence_dt, popup_type="EVENT TIME")
+                else:
+                    if not event.get("event_notified", False):
+                        event["event_notified"] = True
+                        changed = True
+                        self.show_popup(event, occurrence_dt, popup_type="EVENT TIME")
+
+            elif not recurring and now > occurrence_dt + timedelta(minutes=2):
+                if not event.get("event_notified", False):
                     event["event_notified"] = True
                     changed = True
 
         if changed:
             self.save_events(events)
 
-    def show_popup(self, event, popup_type="REMINDER"):
+    def show_popup(self, event, occurrence_dt, popup_type="REMINDER"):
         if self.popup_open:
             return
 
@@ -269,17 +312,24 @@ class EventNotifier:
         self.play_sound()
 
         title = event.get("title", "Event")
-        date = event.get("date", "")
-        time = event.get("time", "")
         notes = event.get("notes", "")
         reminder = self.normalize_reminder(event.get("reminder", "None"))
+
+        repeat_mode = event.get("repeat_mode", "once")
+        repeat_text = "Once"
+
+        if repeat_mode == "every_day":
+            repeat_text = "Every Day"
+        elif repeat_mode == "days":
+            repeat_text = "Days: " + ", ".join(event.get("days", []))
 
         message = (
             f"{popup_type}\n\n"
             f"{title}\n\n"
-            f"{date} {time}\n"
-            f"{self.remaining_text(event)}\n\n"
-            f"Reminder: {reminder}"
+            f"{occurrence_dt.strftime('%Y-%m-%d %H:%M')}\n"
+            f"{self.remaining_text(occurrence_dt)}\n\n"
+            f"Reminder: {reminder}\n"
+            f"Repeat: {repeat_text}"
         )
 
         if notes:

@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from kivy.clock import Clock
@@ -21,12 +21,12 @@ from utils.text_editor_popup import open_text_editor
 
 Window.softinput_mode = "resize"
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 EVENTS_DIR = BASE_DIR / "data" / "events"
 EVENTS_FILE = EVENTS_DIR / "events.json"
 EVENTS_DIR.mkdir(parents=True, exist_ok=True)
 
+DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 REMINDER_OPTIONS = [
     "None",
@@ -87,14 +87,13 @@ def cal_font(base):
 
 def event_row_height():
     p = device_profile()
-    # Event rows now show: title, date/time, countdown, reminder.
     if p == "phone":
-        return height(165)
+        return height(180)
     if p == "tablet":
-        return height(145)
+        return height(160)
     if p == "m12":
-        return height(135)
-    return height(118)
+        return height(150)
+    return height(130)
 
 
 class CalendarScreen(Screen):
@@ -105,6 +104,10 @@ class CalendarScreen(Screen):
         self.selected_index = None
         self.mode = "list"
         self.active_filter = "upcoming"
+
+        self.repeat_mode = "once"
+        self.days = []
+        self.until_date = ""
 
         self.root_box = BoxLayout(
             orientation="vertical",
@@ -138,12 +141,25 @@ class CalendarScreen(Screen):
         if reminder not in REMINDER_OPTIONS:
             reminder = "None"
 
+        repeat_mode = event.get("repeat_mode", "once")
+        if repeat_mode not in ("once", "every_day", "days"):
+            repeat_mode = "once"
+
+        days = event.get("days", [])
+        if not isinstance(days, list):
+            days = []
+
         return {
             "title": str(event.get("title", "")).strip() or "Untitled Event",
             "date": str(event.get("date", "")).strip(),
             "time": str(event.get("time", "")).strip(),
             "notes": str(event.get("notes", "")).strip(),
             "reminder": reminder,
+            "repeat_mode": repeat_mode,
+            "days": days,
+            "until_date": str(event.get("until_date", "")).strip(),
+            "last_reminder_date": str(event.get("last_reminder_date", "")).strip(),
+            "last_event_date": str(event.get("last_event_date", "")).strip(),
             "reminder_notified": bool(event.get("reminder_notified", event.get("notified", False))),
             "event_notified": bool(event.get("event_notified", False))
         }
@@ -156,16 +172,101 @@ class CalendarScreen(Screen):
         except Exception:
             return None
 
+    def get_today_occurrence(self, event, now=None):
+        if now is None:
+            now = datetime.now()
+
+        base_dt = self.parse_event_datetime(event)
+        if not base_dt:
+            return None
+
+        repeat_mode = event.get("repeat_mode", "once")
+        today = now.date()
+
+        if repeat_mode == "once":
+            return base_dt
+
+        if today < base_dt.date():
+            return None
+
+        until_date = str(event.get("until_date", "")).strip()
+        if until_date:
+            try:
+                until = datetime.strptime(until_date, "%Y-%m-%d").date()
+                if today > until:
+                    return None
+            except Exception:
+                pass
+
+        if repeat_mode == "every_day":
+            return datetime.combine(today, base_dt.time())
+
+        if repeat_mode == "days":
+            today_name = DAY_NAMES[now.weekday()]
+            days = event.get("days", [])
+            if today_name not in days:
+                return None
+            return datetime.combine(today, base_dt.time())
+
+        return base_dt
+
+    def next_occurrence(self, event):
+        now = datetime.now()
+        base_dt = self.parse_event_datetime(event)
+
+        if not base_dt:
+            return None
+
+        repeat_mode = event.get("repeat_mode", "once")
+
+        if repeat_mode == "once":
+            return base_dt
+
+        today = now.date()
+        until_date = str(event.get("until_date", "")).strip()
+        until = None
+
+        if until_date:
+            try:
+                until = datetime.strptime(until_date, "%Y-%m-%d").date()
+            except Exception:
+                until = None
+
+        for offset in range(0, 370):
+            day = today + timedelta(days=offset)
+
+            if day < base_dt.date():
+                continue
+
+            if until and day > until:
+                return None
+
+            if repeat_mode == "every_day":
+                candidate = datetime.combine(day, base_dt.time())
+            elif repeat_mode == "days":
+                day_name = DAY_NAMES[day.weekday()]
+                if day_name not in event.get("days", []):
+                    continue
+                candidate = datetime.combine(day, base_dt.time())
+            else:
+                return base_dt
+
+            if candidate >= now:
+                return candidate
+
+        return None
+
     def sort_events(self):
         self.events = sorted(
             self.events,
-            key=lambda e: self.parse_event_datetime(e) or datetime.max
+            key=lambda e: self.next_occurrence(e) or self.parse_event_datetime(e) or datetime.max
         )
 
     def countdown_text(self, event):
-        dt = self.parse_event_datetime(event)
+        dt = self.next_occurrence(event)
+
         if not dt:
-            return "Invalid date/time"
+            return "No upcoming occurrence"
 
         diff = dt - datetime.now()
         if diff.total_seconds() < 0:
@@ -181,6 +282,19 @@ class CalendarScreen(Screen):
         if hours > 0:
             return f"In {hours}h {minutes}m"
         return f"In {minutes}m"
+
+    def reminder_datetime(self, event):
+        reminder = event.get("reminder", "None")
+        minutes = REMINDER_MINUTES.get(reminder)
+
+        if minutes is None:
+            return None
+
+        event_dt = self.next_occurrence(event)
+        if not event_dt:
+            return None
+
+        return event_dt - timedelta(minutes=minutes)
 
     def reminder_display_text(self, event):
         reminder = event.get("reminder", "None")
@@ -198,19 +312,41 @@ class CalendarScreen(Screen):
 
         return f"Notification: {reminder} before  Notify: {remind_at.strftime('%m/%d %I:%M %p')}"
 
+    def repeat_display_text(self, event):
+        mode = event.get("repeat_mode", "once")
+
+        if mode == "every_day":
+            text = "Repeat: Every Day"
+        elif mode == "days":
+            days = event.get("days", [])
+            text = "Repeat: " + (", ".join(days) if days else "Days")
+        else:
+            text = "Repeat: Once"
+
+        until = str(event.get("until_date", "")).strip()
+        if until:
+            try:
+                dt = datetime.strptime(until, "%Y-%m-%d")
+                text += f" until {dt.strftime('%b %d, %Y')}"
+            except Exception:
+                text += f" until {until}"
+
+        return text
+
     def event_display_text(self, event):
         title = event.get("title", "Untitled Event")
-        date = event.get("date", "")
-        time = event.get("time", "")
+        dt = self.next_occurrence(event) or self.parse_event_datetime(event)
+        when = dt.strftime("%Y-%m-%d %H:%M") if dt else f"{event.get('date', '')} {event.get('time', '')}"
         reminder_line = self.reminder_display_text(event)
-        when = f"{date} {time}" if time else date
-        return f"{title}\n{when}\nCountdown: {self.countdown_text(event)}\n{reminder_line}"
-    
+        repeat_line = self.repeat_display_text(event)
+
+        return f"{title}\n{when}\nCountdown: {self.countdown_text(event)}\n{reminder_line}\n{repeat_line}"
+
     def event_color(self, event, selected=False):
         if selected:
             return (0.25, 0.45, 0.75, 1)
 
-        dt = self.parse_event_datetime(event)
+        dt = self.next_occurrence(event) or self.parse_event_datetime(event)
         if not dt:
             return (0.10, 0.15, 0.25, 1)
 
@@ -229,7 +365,10 @@ class CalendarScreen(Screen):
         result = []
 
         for index, event in enumerate(self.events):
-            dt = self.parse_event_datetime(event)
+            dt = self.next_occurrence(event)
+
+            if not dt:
+                dt = self.parse_event_datetime(event)
 
             if not dt:
                 continue
@@ -252,7 +391,8 @@ class CalendarScreen(Screen):
                     result.append((index, event))
 
             elif self.active_filter == "past":
-                if dt < now:
+                base_dt = self.parse_event_datetime(event)
+                if base_dt and base_dt < now and event.get("repeat_mode", "once") == "once":
                     result.append((index, event))
 
             elif self.active_filter == "all":
@@ -265,14 +405,10 @@ class CalendarScreen(Screen):
         self.sort_events()
         self.build_list_view()
         Clock.unschedule(self.refresh_countdowns)
-        # Global EventNotifier handles notifications.
         Clock.schedule_interval(self.refresh_countdowns, 60)
-
-        # Global EventNotifier handles notifications.
 
     def on_leave(self):
         Clock.unschedule(self.refresh_countdowns)
-        # Global EventNotifier handles notifications.
 
     def refresh_countdowns(self, dt):
         if self.mode == "list":
@@ -295,21 +431,6 @@ class CalendarScreen(Screen):
         self.active_filter = name
         self.selected_index = None
         self.build_list_view()
-
-    def reminder_datetime(self, event):
-        reminder = event.get("reminder", "None")
-        minutes = REMINDER_MINUTES.get(reminder)
-
-        if minutes is None:
-            return None
-
-        event_dt = self.parse_event_datetime(event)
-        if not event_dt:
-            return None
-
-        from datetime import timedelta
-        return event_dt - timedelta(minutes=minutes)
-
 
     def build_list_view(self, *args):
         self.mode = "list"
@@ -359,7 +480,7 @@ class CalendarScreen(Screen):
             for index, event in visible_events:
                 btn = Button(
                     text=self.event_display_text(event),
-                    font_size=cal_font(18),
+                    font_size=cal_font(16),
                     size_hint_y=None,
                     height=event_row_height(),
                     halign="left",
@@ -426,6 +547,11 @@ class CalendarScreen(Screen):
             "time": f"{default_hour:02}:00",
             "notes": "",
             "reminder": "None",
+            "repeat_mode": "once",
+            "days": [],
+            "until_date": "",
+            "last_reminder_date": "",
+            "last_event_date": "",
             "reminder_notified": False,
             "event_notified": False
         }
@@ -435,17 +561,17 @@ class CalendarScreen(Screen):
 
         self.root_box.add_widget(Label(
             text="Add Event" if is_new else "Edit Event",
-            font_size=cal_font(30),
+            font_size=cal_font(28),
             bold=True,
-            size_hint=(1, 0.08)
+            size_hint=(1, 0.07)
         ))
 
         self.title_input = TextInput(
             text=event.get("title", ""),
             hint_text="Event title",
-            font_size=cal_font(20),
+            font_size=cal_font(18),
             multiline=False,
-            size_hint=(1, 0.09),
+            size_hint=(1, 0.075),
             use_bubble=False,
             use_handles=False,
             readonly=(device_profile() == "m12")
@@ -456,42 +582,40 @@ class CalendarScreen(Screen):
 
         self.root_box.add_widget(self.title_input)
 
+        date_time_row = BoxLayout(orientation="horizontal", spacing=height(5), size_hint=(1, 0.075))
+
         self.date_input = TextInput(
             text=event.get("date", ""),
-            hint_text="Tap to pick date",
-            font_size=cal_font(20),
+            hint_text="Tap date",
+            font_size=cal_font(18),
             multiline=False,
             readonly=True,
-            size_hint=(1, 0.09),
             use_bubble=False,
             use_handles=False
         )
         self.date_input.bind(on_touch_down=self.date_field_touched)
-        self.root_box.add_widget(self.date_input)
 
         self.time_input = TextInput(
             text=event.get("time", ""),
-            hint_text="Tap to pick time",
-            font_size=cal_font(20),
+            hint_text="Tap time",
+            font_size=cal_font(18),
             multiline=False,
             readonly=True,
-            size_hint=(1, 0.09),
             use_bubble=False,
             use_handles=False
         )
         self.time_input.bind(on_touch_down=self.time_field_touched)
-        self.root_box.add_widget(self.time_input)
 
-     #   hide_btn = self.make_btn("Hide Keyboard", self.hide_keyboard, fs=18)
-     #   hide_btn.size_hint = (1, 0.075)
-     #   self.root_box.add_widget(hide_btn)
+        date_time_row.add_widget(self.date_input)
+        date_time_row.add_widget(self.time_input)
+        self.root_box.add_widget(date_time_row)
 
         self.notes_input = TextInput(
             text=event.get("notes", ""),
             hint_text="Notes",
-            font_size=cal_font(18),
+            font_size=cal_font(16),
             multiline=True,
-            size_hint=(1, 0.25),
+            size_hint=(1, 0.14),
             use_bubble=False,
             use_handles=False,
             readonly=(device_profile() == "m12")
@@ -509,28 +633,191 @@ class CalendarScreen(Screen):
         self.reminder_spinner = Spinner(
             text=reminder_text,
             values=REMINDER_OPTIONS,
-            font_size=cal_font(22),
-            size_hint=(1, 0.09),
+            font_size=cal_font(18),
+            size_hint=(1, 0.075),
             background_normal="",
             background_color=(0.12, 0.20, 0.35, 1)
         )
         self.root_box.add_widget(self.reminder_spinner)
 
+        self.repeat_mode = event.get("repeat_mode", "once")
+        self.days = list(event.get("days", []))
+        self.until_date = event.get("until_date", "")
+
+        repeat_row = BoxLayout(orientation="horizontal", spacing=height(5), size_hint=(1, 0.07))
+
+        self.once_btn = self.make_btn("Once", self.set_once, fs=12)
+        self.every_btn = self.make_btn("Every Day", self.set_every_day, fs=12)
+        self.days_btn = self.make_btn("Days", self.set_days_mode, fs=12)
+
+        repeat_row.add_widget(self.once_btn)
+        repeat_row.add_widget(self.every_btn)
+        repeat_row.add_widget(self.days_btn)
+        self.root_box.add_widget(repeat_row)
+
+        days_row = BoxLayout(orientation="horizontal", spacing=height(3), size_hint=(1, 0.07))
+        self.day_buttons = {}
+
+        for day in DAY_NAMES:
+            btn = self.make_btn(day, lambda inst, d=day: self.toggle_day(d), fs=11)
+            self.day_buttons[day] = btn
+            days_row.add_widget(btn)
+
+        self.root_box.add_widget(days_row)
+
+        until_label = Label(
+            text="Repeat Until   None = Forever",
+            font_size=cal_font(12),
+            size_hint=(1, 0.04)
+        )
+        self.root_box.add_widget(until_label)
+
+        until_row = BoxLayout(orientation="horizontal", spacing=height(5), size_hint=(1, 0.065))
+
+        until_row.add_widget(self.make_btn("-M", lambda x: self.change_until_month(-1), fs=11))
+        self.until_month_label = Label(text="None", font_size=cal_font(12))
+        until_row.add_widget(self.until_month_label)
+
+        until_row.add_widget(self.make_btn("-D", lambda x: self.change_until_day(-1), fs=11))
+        self.until_day_label = Label(text="--", font_size=cal_font(12))
+        until_row.add_widget(self.until_day_label)
+
+        until_row.add_widget(self.make_btn("-Y", lambda x: self.change_until_year(-1), fs=11))
+        self.until_year_label = Label(text="----", font_size=cal_font(12))
+        until_row.add_widget(self.until_year_label)
+
+        self.root_box.add_widget(until_row)
+
+        until_row2 = BoxLayout(orientation="horizontal", spacing=height(5), size_hint=(1, 0.065))
+
+        until_row2.add_widget(self.make_btn("+M", lambda x: self.change_until_month(1), fs=11))
+        until_row2.add_widget(self.make_btn("+D", lambda x: self.change_until_day(1), fs=11))
+        until_row2.add_widget(self.make_btn("+Y", lambda x: self.change_until_year(1), fs=11))
+        until_row2.add_widget(self.make_btn("Clear Until", self.clear_until, (0.35, 0.12, 0.12, 1), fs=11))
+
+        self.root_box.add_widget(until_row2)
+
+        self.update_repeat_buttons()
+        self.update_until_label()
+
         self.status_label = Label(
             text="",
-            font_size=cal_font(14),
-            size_hint=(1, 0.04),
+            font_size=cal_font(13),
+            size_hint=(1, 0.035),
             halign="center",
             valign="middle"
         )
-    
         self.status_label.bind(size=lambda inst, val: setattr(inst, "text_size", val))
         self.root_box.add_widget(self.status_label)
 
-        buttons = BoxLayout(orientation="horizontal", spacing=height(6), size_hint=(1, 0.12))
+        buttons = BoxLayout(orientation="horizontal", spacing=height(6), size_hint=(1, 0.09))
         buttons.add_widget(self.make_btn("Save", lambda inst: self.save_event(index), (0.12, 0.20, 0.35, 1)))
         buttons.add_widget(self.make_btn("Cancel", self.build_list_view))
         self.root_box.add_widget(buttons)
+
+    def set_once(self, instance):
+        self.repeat_mode = "once"
+        self.update_repeat_buttons()
+
+    def set_every_day(self, instance):
+        self.repeat_mode = "every_day"
+        self.days = []
+        self.update_repeat_buttons()
+
+    def set_days_mode(self, instance):
+        self.repeat_mode = "days"
+        self.update_repeat_buttons()
+
+    def toggle_day(self, day):
+        self.repeat_mode = "days"
+
+        if day in self.days:
+            self.days.remove(day)
+        else:
+            self.days.append(day)
+
+        self.update_repeat_buttons()
+
+    def update_repeat_buttons(self):
+        off = (0.10, 0.15, 0.25, 1)
+        on = (0.10, 0.45, 0.20, 1)
+
+        self.once_btn.background_color = on if self.repeat_mode == "once" else off
+        self.every_btn.background_color = on if self.repeat_mode == "every_day" else off
+        self.days_btn.background_color = on if self.repeat_mode == "days" else off
+
+        for day, btn in self.day_buttons.items():
+            btn.background_color = on if day in self.days else off
+
+    def ensure_until_date(self):
+        if not self.until_date:
+            self.until_date = datetime.now().strftime("%Y-%m-%d")
+
+    def get_until_dt(self):
+        self.ensure_until_date()
+        return datetime.strptime(self.until_date, "%Y-%m-%d")
+
+    def set_until_dt(self, dt):
+        self.until_date = dt.strftime("%Y-%m-%d")
+        self.update_until_label()
+
+    def change_until_month(self, delta):
+        try:
+            dt = self.get_until_dt()
+
+            month = dt.month + delta
+            year = dt.year
+
+            if month < 1:
+                month = 12
+                year -= 1
+
+            if month > 12:
+                month = 1
+                year += 1
+
+            day = min(dt.day, self.days_in_month(year, month))
+            self.set_until_dt(dt.replace(year=year, month=month, day=day))
+
+        except Exception as e:
+            self.status_label.text = str(e)
+
+    def change_until_day(self, delta):
+        try:
+            dt = self.get_until_dt()
+            self.set_until_dt(dt + timedelta(days=delta))
+        except Exception as e:
+            self.status_label.text = str(e)
+
+    def change_until_year(self, delta):
+        try:
+            dt = self.get_until_dt()
+            year = dt.year + delta
+            day = min(dt.day, self.days_in_month(year, dt.month))
+            self.set_until_dt(dt.replace(year=year, day=day))
+        except Exception as e:
+            self.status_label.text = str(e)
+
+    def clear_until(self, instance):
+        self.until_date = ""
+        self.update_until_label()
+
+    def update_until_label(self):
+        if not self.until_date:
+            self.until_month_label.text = "None"
+            self.until_day_label.text = "--"
+            self.until_year_label.text = "----"
+            return
+
+        try:
+            dt = datetime.strptime(self.until_date, "%Y-%m-%d")
+            self.until_month_label.text = dt.strftime("%b")
+            self.until_day_label.text = dt.strftime("%d")
+            self.until_year_label.text = dt.strftime("%Y")
+        except Exception:
+            self.until_month_label.text = "Err"
+            self.until_day_label.text = "--"
+            self.until_year_label.text = "----"
 
     def title_touched(self, instance, touch):
         if instance.collide_point(*touch.pos):
@@ -632,7 +919,6 @@ class CalendarScreen(Screen):
                     values[key] = 1
                 refresh()
 
-            minus.unbind(on_press=minus._events.get('on_press')[0][0] if False else None)
             minus.bind(on_press=dec)
             plus.bind(on_press=inc)
             row.add_widget(minus)
@@ -765,8 +1051,13 @@ class CalendarScreen(Screen):
         time_text = self.time_input.text.strip() or "00:00"
         notes = self.notes_input.text.strip()
         reminder = self.reminder_spinner.text.strip() if hasattr(self, "reminder_spinner") else "None"
+
         if reminder not in REMINDER_OPTIONS:
             reminder = "None"
+
+        if self.repeat_mode == "days" and not self.days:
+            self.status_label.text = "Select repeat days or choose Once"
+            return
 
         if not date_text:
             self.status_label.text = "Date is required."
@@ -782,6 +1073,11 @@ class CalendarScreen(Screen):
             "time": time_text,
             "notes": notes,
             "reminder": reminder,
+            "repeat_mode": self.repeat_mode,
+            "days": self.days,
+            "until_date": self.until_date,
+            "last_reminder_date": "",
+            "last_event_date": "",
             "reminder_notified": False,
             "event_notified": False
         }
